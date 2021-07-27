@@ -36,7 +36,7 @@ This is a fork of [link](https://github.com/jparams/data-store) that adds expiri
 All the credit goes to the original author.
 
 ### What is Data Store?
-Data Store is a full-featured indexed Java Collection capable of ultra-fast data lookup. But don't take my word for it, run the [benchmark](src/test/java/com/jparams/store/memory/MemoryStoreBenchmarkTest.java) yourself!
+Data Store is a full-featured indexed Java Collection capable of ultra-fast data lookup.
 
 Here is one I ran earlier...
 
