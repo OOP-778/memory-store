@@ -4,7 +4,7 @@ plugins {
     `maven-publish`
 }
 
-val version = "1.0"
+val mavenVersion = "1.0"
 
 tasks {
     build.get().dependsOn(shadowJar)
@@ -36,7 +36,7 @@ tasks {
 
                 groupId = "com.oop"
                 artifactId = "memory-store"
-                version = version
+                version = mavenVersion
             }
         }
     }
