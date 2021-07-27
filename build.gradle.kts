@@ -7,6 +7,8 @@ plugins {
 val version = "1.0"
 
 tasks {
+    build.get().dependsOn(shadowJar)
+
     shadowJar {
         finalizedBy(publish)
         archiveFileName.set("memory-store.jar")

@@ -1,7 +1,6 @@
 # Data Store
+![Latest Version](https://img.shields.io/maven-metadata/v/https/repo.codemc.org/repository/maven-public/com/oop/memory-store/maven-metadata.xml.svg)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jparams/data-store/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jparams/data-store)
- [![Build Status](https://travis-ci.org/jparams/data-store.svg?branch=master)](https://travis-ci.org/jparams/data-store) [![Coverage Status](https://coveralls.io/repos/github/jparams/data-store/badge.svg?branch=master)](https://coveralls.io/github/jparams/data-store?branch=master) [![Javadocs](http://www.javadoc.io/badge/com.jparams/data-store.svg)](http://www.javadoc.io/doc/com.jparams/data-store)
 
 ## Getting Started
 
@@ -9,16 +8,27 @@
 
 Maven:
 ```
+<repository>
+    <id>code-mc</id>
+    <url>https://repo.codemc.org/repository/maven-releases/</url>
+</repository>
+
 <dependency>
-    <groupId>com.jparams</groupId>
-    <artifactId>data-store</artifactId>
-    <version>3.x.x</version>
+    <groupId>com.oop</groupId>
+    <artifactId>memory-store</artifactId>
+    <version>latest build version</version>
 </dependency>
 ```
 
 Gradle:
 ```
-compile 'com.jparams:data-store:3.x.x'
+repositories {
+    maven { url 'https://repo.codemc.org/repository/maven-releases/' }
+}
+
+dependencies {
+    implementation "com.oop:memory-store:latest build version"
+}
 ```
 
 ### Information
