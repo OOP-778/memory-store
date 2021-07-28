@@ -26,6 +26,6 @@ public class PredicateExpiringPolicy<V> implements ExpiringPolicy<V, PredicateEx
     @Override
     public void onAccess(V value, EmptyExpirationData data) {}
 
-    public static class EmptyExpirationData implements ExpirationData {}
+    public static class EmptyExpirationData implements ExpiringPolicy.ExpirationData {}
 
 }

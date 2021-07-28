@@ -13,15 +13,8 @@ import com.oop.memorystore.implementation.reference.ReferenceFactory;
  */
 public class ExpiringReferenceFactory<V> implements ReferenceFactory<V> {
 
-  private final ExpiringStore<V> store;
-
-  public ExpiringReferenceFactory(ExpiringStore<V> store) {
-    this.store = store;
-  }
-
   @Override
   public Reference<V> createReference(V obj) {
-    store.getExpirationManager().onAdd(obj);
     return new MemoryReference<>(obj);
   }
 }

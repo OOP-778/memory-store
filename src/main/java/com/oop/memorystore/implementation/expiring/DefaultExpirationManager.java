@@ -1,29 +1,32 @@
 package com.oop.memorystore.implementation.expiring;
 
-import com.oop.memorystore.api.ExpiringStore;
+import com.oop.memorystore.api.ExpirationManager;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class to handle expirations
  *
  * @param <V>
  */
-public class DefaultExpirationManager<V> {
+public class DefaultExpirationManager<V> implements ExpirationManager<V> {
 
-  private final Map<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyData = new HashMap<>();
+  private final Map<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyData =
+      new HashMap<>();
 
-  private DefaultExpirationManager(ExpiringPolicy<V, ?> ...policies) {
+  public DefaultExpirationManager(ExpiringPolicy<V, ?>... policies) {
     for (ExpiringPolicy<V, ?> policy : policies) {
       policyData.put(policy, new HashMap<>());
     }
   }
 
   public void onAdd(final V value) {
-    for (Map.Entry<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>>
-        policyEntry : policyData.entrySet()) {
-      ExpiringPolicy.ExpirationData expirationData = policyEntry.getKey().createExpirationData(value);
+    for (Map.Entry<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyEntry :
+        policyData.entrySet()) {
+      ExpiringPolicy.ExpirationData expirationData =
+          policyEntry.getKey().createExpirationData(value);
       if (expirationData == null) {
         continue;
       }
@@ -38,9 +41,15 @@ public class DefaultExpirationManager<V> {
     }
   }
 
+  public void onAccess(final V value) {
+
+  }
+
   public boolean checkExpiration(V value) {
     boolean shouldExpire = false;
-    for (Map.Entry<ExpiringPolicy<V, ? extends ExpiringPolicy.ExpirationData>, Map<V, ExpiringPolicy.ExpirationData>>
+    for (Map.Entry<
+            ExpiringPolicy<V, ? extends ExpiringPolicy.ExpirationData>,
+            Map<V, ExpiringPolicy.ExpirationData>>
         policyEntry : policyData.entrySet()) {
       final ExpiringPolicy policy = policyEntry.getKey();
 

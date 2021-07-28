@@ -47,7 +47,7 @@ public class TimedExpiringPolicy<V>
       data.lastFetched = System.currentTimeMillis();
   }
 
-  public static class TimedExpirationData implements ExpirationData {
+  public static class TimedExpirationData implements ExpiringPolicy.ExpirationData {
     private final TimeUnit unit;
     private final long time;
     private final boolean shouldResetAfterAccess;

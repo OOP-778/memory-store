@@ -18,5 +18,5 @@ public interface ExpiringPolicy<V, T extends ExpiringPolicy.ExpirationData> {
     return this::checkExpiration;
   }
 
-  interface ExpirationData {}
+  static interface ExpirationData {}
 }
