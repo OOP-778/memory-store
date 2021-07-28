@@ -1,15 +1,16 @@
-package com.oop.memorystore;
+package com.oop.memorystore.implementation;
 
-import com.oop.memorystore.index.Index;
-import com.oop.memorystore.index.IndexDefinition;
-import com.oop.memorystore.index.IndexException;
-import com.oop.memorystore.index.IndexManager;
-import com.oop.memorystore.query.IndexMatch;
-import com.oop.memorystore.query.Operator;
-import com.oop.memorystore.query.Query;
-import com.oop.memorystore.query.QueryDefinition;
-import com.oop.memorystore.reference.Reference;
-import com.oop.memorystore.reference.ReferenceManager;
+import com.oop.memorystore.api.Store;
+import com.oop.memorystore.implementation.index.Index;
+import com.oop.memorystore.implementation.index.IndexDefinition;
+import com.oop.memorystore.implementation.index.IndexException;
+import com.oop.memorystore.implementation.index.IndexManager;
+import com.oop.memorystore.implementation.query.IndexMatch;
+import com.oop.memorystore.implementation.query.Operator;
+import com.oop.memorystore.implementation.query.Query;
+import com.oop.memorystore.implementation.query.QueryDefinition;
+import com.oop.memorystore.implementation.reference.Reference;
+import com.oop.memorystore.implementation.reference.ReferenceManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 public abstract class AbstractStore<V> extends AbstractCollection<V> implements Store<V> {
   protected final ReferenceManager<V> referenceManager;
   protected final IndexManager<V> indexManager;
+
+  protected boolean lockIndexing = false;
 
   protected AbstractStore(
       final ReferenceManager<V> referenceManager, final IndexManager<V> indexManager) {
@@ -166,7 +169,9 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
       changed = true;
     }
 
-    indexManager.reindex(references);
+    if (!lockIndexing) {
+      indexManager.reindex(references);
+    }
     return changed;
   }
 
@@ -229,5 +234,9 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
       iterator.remove();
       indexManager.removeReference(previous);
     }
+  }
+
+  public void lockIndexing(boolean lockIndexing) {
+    this.lockIndexing = lockIndexing;
   }
 }
