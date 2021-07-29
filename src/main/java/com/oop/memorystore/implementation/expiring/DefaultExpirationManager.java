@@ -42,7 +42,14 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
   }
 
   public void onAccess(final V value) {
+    for (Map.Entry<
+            ExpiringPolicy<V, ? extends ExpiringPolicy.ExpirationData>,
+            Map<V, ExpiringPolicy.ExpirationData>>
+            policyEntry : policyData.entrySet()) {
+      final ExpiringPolicy policy = policyEntry.getKey();
 
+      policy.onAccess(value, policyEntry.getValue().get(value));
+    }
   }
 
   public boolean checkExpiration(V value) {
