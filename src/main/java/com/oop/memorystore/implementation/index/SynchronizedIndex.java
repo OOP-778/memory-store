@@ -5,77 +5,77 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class SynchronizedIndex<T> implements Index<T> {
-  private final Index<T> index;
-  private final Object mutex;
+    private final Index<T> index;
+    private final Object mutex;
 
-  public SynchronizedIndex(final Index<T> index, final Object mutex) {
-    this.index = index;
-    this.mutex = mutex;
-  }
-
-  @Override
-  public T getFirst(final Object key) {
-    final T result;
-
-    synchronized (mutex) {
-      result = index.getFirst(key);
+    public SynchronizedIndex(final Index<T> index, final Object mutex) {
+        this.index = index;
+        this.mutex = mutex;
     }
 
-    return result;
-  }
+    @Override
+    public T getFirst(final Object key) {
+        final T result;
 
-  @Override
-  public Optional<T> findFirst(final Object key) {
-    final Optional<T> result;
+        synchronized (mutex) {
+            result = index.getFirst(key);
+        }
 
-    synchronized (mutex) {
-      result = index.findFirst(key);
+        return result;
     }
 
-    return result;
-  }
+    @Override
+    public Optional<T> findFirst(final Object key) {
+        final Optional<T> result;
 
-  @Override
-  public List<T> get(final Object key) {
-    final List<T> results;
+        synchronized (mutex) {
+            result = index.findFirst(key);
+        }
 
-    synchronized (mutex) {
-      results = index.get(key);
+        return result;
     }
 
-    return results;
-  }
+    @Override
+    public List<T> get(final Object key) {
+        final List<T> results;
 
-  @Override
-  public String getName() {
-    return index.getName();
-  }
+        synchronized (mutex) {
+            results = index.get(key);
+        }
 
-  public Index<T> getIndex() {
-    return index;
-  }
-
-  @Override
-  public boolean equals(final Object other) {
-    if (this == other) {
-      return true;
+        return results;
     }
 
-    if (other == null || getClass() != other.getClass()) {
-      return false;
+    @Override
+    public String getName() {
+        return index.getName();
     }
 
-    final SynchronizedIndex<?> that = (SynchronizedIndex<?>) other;
-    return Objects.equals(index, that.index) && Objects.equals(mutex, that.mutex);
-  }
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(index, mutex);
-  }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
 
-  @Override
-  public String toString() {
-    return String.valueOf(index);
-  }
+        final SynchronizedIndex<?> that = (SynchronizedIndex<?>) other;
+        return Objects.equals(index, that.index);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(index);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(index);
+    }
+
+    public Index<T> getIndex() {
+        return index;
+    }
 }

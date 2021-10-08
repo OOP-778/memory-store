@@ -1,6 +1,8 @@
 package com.oop.memorystore.implementation;
 
 import com.oop.memorystore.api.Store;
+import com.oop.memorystore.api.StoreQuery;
+import com.oop.memorystore.implementation.expiring.ExpiringStoreQuery;
 import com.oop.memorystore.implementation.index.Index;
 import com.oop.memorystore.implementation.index.IndexDefinition;
 import com.oop.memorystore.implementation.index.IndexException;
@@ -121,6 +123,11 @@ public class UnmodifiableStore<V> implements Store<V> {
   @Override
   public void lockIndexing(boolean lockIndexing) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public StoreQuery<V> createQuery() {
+    return store.createQuery();
   }
 
   @Override

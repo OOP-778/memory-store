@@ -12,10 +12,10 @@ import java.util.Map;
  * @param <V>
  */
 public class DefaultExpirationManager<V> implements ExpirationManager<V> {
-
   private final Map<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyData =
       new HashMap<>();
 
+  @SafeVarargs
   public DefaultExpirationManager(ExpiringPolicy<V, ?>... policies) {
     for (ExpiringPolicy<V, ?> policy : policies) {
       policyData.put(policy, new HashMap<>());

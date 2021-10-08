@@ -1,6 +1,7 @@
 package com.oop.memorystore.implementation;
 
 import com.oop.memorystore.api.Store;
+import com.oop.memorystore.api.StoreQuery;
 import com.oop.memorystore.implementation.index.*;
 import com.oop.memorystore.implementation.index.reducer.Reducer;
 import com.oop.memorystore.implementation.query.Query;
@@ -464,6 +465,11 @@ public class SynchronizedStore<V> implements Store<V> {
     synchronized (mutex) {
       store.lockIndexing(lockIndexing);
     }
+  }
+
+  @Override
+  public StoreQuery<V> createQuery() {
+    return new StoreQueryImpl<>(this);
   }
 
   @Override

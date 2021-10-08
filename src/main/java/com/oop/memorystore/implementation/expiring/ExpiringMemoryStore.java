@@ -4,6 +4,7 @@ import com.oop.memorystore.api.ExpirationManager;
 import com.oop.memorystore.api.ExpiringStore;
 import com.oop.memorystore.api.Store;
 import com.oop.memorystore.implementation.AbstractStore;
+import com.oop.memorystore.implementation.StoreQueryImpl;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy;
 import com.oop.memorystore.implementation.identity.DefaultIdentityProvider;
 import com.oop.memorystore.implementation.index.IndexManager;
@@ -21,7 +22,7 @@ import com.oop.memorystore.implementation.reference.ReferenceManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ExpiringMemoryStore<V> extends AbstractStore<V> implements ExpiringStore<V>{
+public class ExpiringMemoryStore<V> extends AbstractStore<V> implements ExpiringStore<V> {
 
   private final DefaultExpirationManager<V> expirationManager;
 
@@ -112,5 +113,10 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
   @Override
   public Store<V> synchronizedStore() {
     return new SynchronizedExpiringStore<>(this);
+  }
+
+  @Override
+  public StoreQueryImpl<V> createQuery() {
+    return new ExpiringStoreQuery<>(this);
   }
 }
