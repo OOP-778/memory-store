@@ -10,17 +10,17 @@ public class QueryBuilder {
     return new QueryBuilder();
   }
 
-  public QueryBuilder or(String index, Object equals) {
-    query.or(index, equals);
+  public QueryBuilder or(final String index, final Object equals) {
+      this.query.or(index, equals);
     return this;
   }
 
-  public QueryBuilder and(String index, Object equals) {
-    query.and(index, equals);
+  public QueryBuilder and(final String index, final Object equals) {
+      this.query.and(index, equals);
     return this;
   }
 
   public Query build() {
-    return query;
+    return this.query;
   }
 }

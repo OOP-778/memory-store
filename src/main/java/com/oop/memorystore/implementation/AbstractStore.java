@@ -47,15 +47,15 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
           }
 
             final Set<Reference<V>> references =
-                Optional.ofNullable(indexManager.getIndex(indexMatch.getIndexName()))
+                Optional.ofNullable(this.indexManager.getIndex(indexMatch.getIndexName()))
                         .map(index -> index.getReferences(indexMatch.getKey()))
                         .orElse(new HashSet<>());
 
-            List<V> removed =
+            final List<V> removed =
                 references
                     .stream()
                     .limit(limit == -1 ? Long.MAX_VALUE : limit)
-                    .peek(indexManager::removeReference)
+                    .peek(this.indexManager::removeReference)
                     .map(Reference::get)
                     .collect(Collectors.toList());
 
@@ -77,7 +77,7 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
 
         for (final IndexMatch indexMatch : indexMatches) {
             final Set<Reference<V>> references =
-                Optional.ofNullable(indexManager.getIndex(indexMatch.getIndexName()))
+                Optional.ofNullable(this.indexManager.getIndex(indexMatch.getIndexName()))
                         .map(index -> index.getReferences(indexMatch.getKey()))
                         .orElse(Collections.emptySet());
 
@@ -99,37 +99,37 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
     @Override
     public <K> Index<V> index(final String indexName, final IndexDefinition<K, V> indexDefinition)
         throws IndexException {
-        return indexManager.createIndex(indexName, indexDefinition, referenceManager.getReferences());
+        return this.indexManager.createIndex(indexName, indexDefinition, this.referenceManager.getReferences());
     }
 
     @Override
     public Index<V> getIndex(final String indexName) {
-        return indexManager.getIndex(indexName);
+        return this.indexManager.getIndex(indexName);
     }
 
     @Override
     public Collection<Index<V>> getIndexes() {
-        return indexManager.getIndexes();
+        return this.indexManager.getIndexes();
     }
 
     @Override
     public boolean removeIndex(final Index<V> index) {
-        return indexManager.removeIndex(index);
+        return this.indexManager.removeIndex(index);
     }
 
     @Override
     public boolean removeIndex(final String indexName) {
-        return indexManager.removeIndex(indexName);
+        return this.indexManager.removeIndex(indexName);
     }
 
     @Override
     public void reindex() {
-        indexManager.reindex(referenceManager.getReferences());
+        this.indexManager.reindex(this.referenceManager.getReferences());
     }
 
     @Override
     public void reindex(final V item) {
-        reindex(Collections.singleton(item));
+        this.reindex(Collections.singleton(item));
     }
 
     @Override
@@ -137,32 +137,32 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         final List<Reference<V>> references =
             items
                 .stream()
-                .map(referenceManager::findReference)
+                .map(this.referenceManager::findReference)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-        indexManager.reindex(references);
+        this.indexManager.reindex(references);
     }
 
     @Override
     public int size() {
-        return referenceManager.size();
+        return this.referenceManager.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        return this.size() == 0;
     }
 
     @Override
     public boolean contains(final Object obj) {
-        return referenceManager.findReference(obj).isPresent();
+        return this.referenceManager.findReference(obj).isPresent();
     }
 
     @Override
     public Iterator<V> iterator() {
-        return new StoreIterator(referenceManager.getReferences().iterator());
+        return new StoreIterator(this.referenceManager.getReferences().iterator());
     }
 
     @Override
@@ -171,34 +171,34 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         boolean changed = false;
 
         for (final V item : collection) {
-            final Optional<Reference<V>> existingReference = referenceManager.findReference(item);
+            final Optional<Reference<V>> existingReference = this.referenceManager.findReference(item);
 
             if (existingReference.isPresent()) {
                 references.add(existingReference.get());
                 continue;
             }
 
-            references.add(referenceManager.add(item));
+            references.add(this.referenceManager.add(item));
             changed = true;
         }
 
-        if (!lockIndexing) {
-            indexManager.reindex(references);
+        if (!this.lockIndexing) {
+            this.indexManager.reindex(references);
         }
         return changed;
     }
 
     @Override
     public boolean add(final V item) {
-        return addAll(Collections.singleton(item));
+        return this.addAll(Collections.singleton(item));
     }
 
     @Override
     public boolean remove(final Object obj) {
-        final Reference<V> reference = referenceManager.remove(obj);
+        final Reference<V> reference = this.referenceManager.remove(obj);
 
         if (reference != null) {
-            indexManager.removeReference(reference);
+            this.indexManager.removeReference(reference);
             return true;
         }
 
@@ -207,16 +207,16 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
 
     @Override
     public void clear() {
-        referenceManager.clear();
-        indexManager.clear();
+        this.referenceManager.clear();
+        this.indexManager.clear();
     }
 
     @Override
     public Store<V> copy() {
-        return createCopy(referenceManager, indexManager);
+        return this.createCopy(this.referenceManager, this.indexManager);
     }
 
-    public void lockIndexing(boolean lockIndexing) {
+    public void lockIndexing(final boolean lockIndexing) {
         this.lockIndexing = lockIndexing;
     }
 
@@ -228,7 +228,7 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         final ReferenceManager<V> referenceManager, final IndexManager<V> indexManager);
 
     protected ReferenceManager<V> getReferenceManager() {
-        return referenceManager;
+        return this.referenceManager;
     }
 
     private class StoreIterator implements Iterator<V> {
@@ -241,19 +241,19 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
 
         @Override
         public boolean hasNext() {
-            return iterator.hasNext();
+            return this.iterator.hasNext();
         }
 
         @Override
         public V next() {
-            previous = iterator.next();
-            return previous.get();
+            this.previous = this.iterator.next();
+            return this.previous.get();
         }
 
         @Override
         public void remove() {
-            iterator.remove();
-            indexManager.removeReference(previous);
+            this.iterator.remove();
+            AbstractStore.this.indexManager.removeReference(this.previous);
         }
     }
 }

@@ -20,7 +20,7 @@ public class ExpiringStoreQuery<V> extends StoreQueryImpl<V> {
         final LinkedHashSet<Reference<V>> values = super.getValuesOfIndex(index, key);
 
         values.removeIf(value -> {
-            boolean shouldBeInvalidated = asExpiringStore().getExpirationManager().checkExpiration(value.get());
+            final boolean shouldBeInvalidated = this.asExpiringStore().getExpirationManager().checkExpiration(value.get());
             if (shouldBeInvalidated) {
                 index.removeIndex(value);
             }

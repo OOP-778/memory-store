@@ -10,10 +10,10 @@ public class IndexMatch {
   }
 
   public String getIndexName() {
-    return indexName;
+    return this.indexName;
   }
 
   public Object getKey() {
-    return key;
+    return this.key;
   }
 }

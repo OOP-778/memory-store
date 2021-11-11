@@ -25,53 +25,53 @@ public class References<K, V> {
 
   public References(final K key, final Reference<V> reference, final Reducer<K, V> reducer) {
     this(key, Collections.singleton(reference), Collections.emptySet(), reducer);
-    reducedReferences.add(reference);
-    reducedReferences = reduce(reducedReferences);
+      this.reducedReferences.add(reference);
+      this.reducedReferences = this.reduce(this.reducedReferences);
   }
 
   public void add(final Reference<V> reference) {
-    references.add(reference);
-    reducedReferences.add(reference);
-    reducedReferences = reduce(reducedReferences);
+      this.references.add(reference);
+      this.reducedReferences.add(reference);
+      this.reducedReferences = this.reduce(this.reducedReferences);
   }
 
   public void remove(final Reference<V> reference) {
-    references.remove(reference);
+      this.references.remove(reference);
 
-    if (reducedReferences.contains(reference)) {
-      reducedReferences =
-          reduce(references); // on remove, re-reduce all references associated with this key
+    if (this.reducedReferences.contains(reference)) {
+        this.reducedReferences =
+          this.reduce(this.references); // on remove, re-reduce all references associated with this key
     }
   }
 
   public Set<Reference<V>> getAllReferences() {
-    return Collections.unmodifiableSet(reducedReferences);
+    return Collections.unmodifiableSet(this.reducedReferences);
   }
 
   public List<V> getAll() {
-    return reducedReferences.stream().map(Reference::get).collect(Collectors.toList());
+    return this.reducedReferences.stream().map(Reference::get).collect(Collectors.toList());
   }
 
   public boolean isEmpty() {
-    return references.isEmpty();
+    return this.references.isEmpty();
   }
 
   public Optional<V> findFirst() {
-    return reducedReferences.stream().map(Reference::get).findFirst();
+    return this.reducedReferences.stream().map(Reference::get).findFirst();
   }
 
   public References<K, V> copy() {
-    return new References<>(key, references, reducedReferences, reducer);
+    return new References<>(this.key, this.references, this.reducedReferences, this.reducer);
   }
 
   private Set<Reference<V>> reduce(final Set<Reference<V>> references) {
-    if (reducer == null) {
+    if (this.reducer == null) {
       return references;
     }
 
     final List<Element<V>> elements =
         references.stream().map(Element::new).collect(Collectors.toList());
-    reducer.reduce(key, elements);
+      this.reducer.reduce(this.key, elements);
 
     return elements.stream()
         .filter(element -> !element.isRemoved())

@@ -21,20 +21,20 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
     }
 
     @Override
-    public StoreQueryImpl<V> filter(String indexName, Object equals) {
-        return filter(indexName, QueryOperator.FIRST, equals);
+    public StoreQueryImpl<V> filter(final String indexName, final Object equals) {
+        return this.filter(indexName, QueryOperator.FIRST, equals);
     }
 
     @Override
-    public StoreQueryImpl<V> filter(String indexName, QueryOperator operator, Object... equals) {
-        final ReferenceIndex<?, V> index = store.indexManager.getIndex(indexName);
+    public StoreQueryImpl<V> filter(final String indexName, final QueryOperator operator, final Object... equals) {
+        final ReferenceIndex<?, V> index = this.store.indexManager.getIndex(indexName);
         if (index == null) {
             throw new IllegalStateException(String.format("Invalid index by name: %s", indexName));
         }
 
         final Set<Reference<V>> fetched = new LinkedHashSet<>();
         for (final Object equal : equals) {
-            final Set<Reference<V>> values = getValuesOfIndex(index, equal);
+            final Set<Reference<V>> values = this.getValuesOfIndex(index, equal);
             if (values.isEmpty()) {
                 continue;
             }
@@ -45,10 +45,10 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
             }
         }
 
-        if (!collection.isEmpty()) {
+        if (!this.collection.isEmpty()) {
             this.collection.retainAll(fetched);
         } else {
-            collection.addAll(fetched);
+            this.collection.addAll(fetched);
         }
         return this;
     }
@@ -61,8 +61,8 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
     }
 
     @Override
-    public <T extends Collection<V>> T collect(T collection) {
-        return asStream().collect(Collectors.toCollection(() -> collection));
+    public <T extends Collection<V>> T collect(final T collection) {
+        return this.asStream().collect(Collectors.toCollection(() -> collection));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
 
     }
 
-    protected LinkedHashSet<Reference<V>> getValuesOfIndex(final ReferenceIndex<?, V> index, Object key) {
+    protected LinkedHashSet<Reference<V>> getValuesOfIndex(final ReferenceIndex<?, V> index, final Object key) {
         return new LinkedHashSet<>(index.getReferences(key));
     }
 }

@@ -35,10 +35,10 @@ abstract class ComparingReducer<K, V> implements Reducer<K, V> {
   }
 
   private Element<V> reduce(final Element<V> element1, final Element<V> element2) {
-    final Object comparable1 = valueProvider.apply(element1.get());
-    final Object comparable2 = valueProvider.apply(element2.get());
+    final Object comparable1 = this.valueProvider.apply(element1.get());
+    final Object comparable2 = this.valueProvider.apply(element2.get());
 
-    if (compare(comparable1, comparable2, comparator, nullGreater) > 0) {
+    if (this.compare(comparable1, comparable2, this.comparator, this.nullGreater) > 0) {
       element2.remove();
       return element1;
     }

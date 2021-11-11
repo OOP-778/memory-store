@@ -12,7 +12,7 @@ import com.oop.memorystore.implementation.reference.ReferenceFactory;
 public class ExpiringReferenceFactory<V> implements ReferenceFactory<V> {
 
     @Override
-    public Reference<V> createReference(V obj) {
+    public Reference<V> createReference(final V obj) {
         return new MemoryReference<>(obj);
     }
 }

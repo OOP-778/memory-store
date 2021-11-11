@@ -22,12 +22,12 @@ public final class Element<V> {
    * @return element value
    */
   public V get() {
-    return reference.get();
+    return this.reference.get();
   }
 
   /** Remove this element */
   public void remove() {
-    removed = true;
+      this.removed = true;
   }
 
   /**
@@ -36,10 +36,10 @@ public final class Element<V> {
    * @return removed
    */
   public boolean isRemoved() {
-    return removed;
+    return this.removed;
   }
 
   Reference<V> getReference() {
-    return reference;
+    return this.reference;
   }
 }

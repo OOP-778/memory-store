@@ -46,13 +46,13 @@ public class ReferenceIndex<K, V> implements Index<V> {
 
   @Override
   public String getName() {
-    return name;
+    return this.name;
   }
 
   @Override
   public Optional<V> findFirst(final Object key) {
-    final K comparableKey = getComparableKey(key);
-    final References<K, V> references = keyToReferencesMap.get(comparableKey);
+    final K comparableKey = this.getComparableKey(key);
+    final References<K, V> references = this.keyToReferencesMap.get(comparableKey);
 
     if (references == null) {
       return Optional.empty();
@@ -62,8 +62,8 @@ public class ReferenceIndex<K, V> implements Index<V> {
   }
 
   public Set<Reference<V>> getReferences(final Object key) {
-    final K comparableKey = getComparableKey(key);
-    final References<K, V> references = keyToReferencesMap.get(comparableKey);
+    final K comparableKey = this.getComparableKey(key);
+    final References<K, V> references = this.keyToReferencesMap.get(comparableKey);
 
     if (references == null) {
       return Collections.emptySet();
@@ -74,8 +74,8 @@ public class ReferenceIndex<K, V> implements Index<V> {
 
   @Override
   public List<V> get(final Object key) {
-    final K comparableKey = getComparableKey(key);
-    final References<K, V> references = keyToReferencesMap.get(comparableKey);
+    final K comparableKey = this.getComparableKey(key);
+    final References<K, V> references = this.keyToReferencesMap.get(comparableKey);
 
     if (references == null) {
       return Collections.emptyList();
@@ -85,56 +85,56 @@ public class ReferenceIndex<K, V> implements Index<V> {
   }
 
   public void index(final Reference<V> reference) throws IndexCreationException {
-    final Set<K> keys = generateKeys(reference);
+    final Set<K> keys = this.generateKeys(reference);
 
-    removeIndex(reference);
+      this.removeIndex(reference);
 
     if (!keys.isEmpty()) {
-      referenceToKeysMap.put(reference, Collections.unmodifiableSet(keys));
+        this.referenceToKeysMap.put(reference, Collections.unmodifiableSet(keys));
       keys.forEach(
           key ->
-              keyToReferencesMap
-                  .computeIfAbsent(key, ignore -> new References<>(key, reference, reducer))
+              this.keyToReferencesMap
+                  .computeIfAbsent(key, ignore -> new References<>(key, reference, this.reducer))
                   .add(reference));
     }
   }
 
   public void removeIndex(final Reference<V> reference) {
-    final Set<K> keys = referenceToKeysMap.get(reference);
+    final Set<K> keys = this.referenceToKeysMap.get(reference);
 
     if (keys == null) {
       return;
     }
 
     for (final K key : keys) {
-      final References<K, V> references = keyToReferencesMap.get(key);
+      final References<K, V> references = this.keyToReferencesMap.get(key);
 
       if (reference != null) {
         references.remove(reference);
 
         if (references.isEmpty()) {
-          keyToReferencesMap.remove(key);
+            this.keyToReferencesMap.remove(key);
         }
       }
     }
 
-    referenceToKeysMap.remove(reference);
+      this.referenceToKeysMap.remove(reference);
   }
 
   public void clear() {
-    keyToReferencesMap.clear();
-    referenceToKeysMap.clear();
+      this.keyToReferencesMap.clear();
+      this.referenceToKeysMap.clear();
   }
 
   public ReferenceIndex<K, V> copy() {
     final Map<K, References<K, V>> keyToReferencesMapCopy =
-        keyToReferencesMap.entrySet().stream()
+        this.keyToReferencesMap.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().copy()));
 
-    final Map<Reference<V>, Set<K>> referenceToKeysMapCopy = new HashMap<>(referenceToKeysMap);
+    final Map<Reference<V>, Set<K>> referenceToKeysMapCopy = new HashMap<>(this.referenceToKeysMap);
 
     return new ReferenceIndex<>(
-        name, keyMapper, reducer, comparisonPolicy, keyToReferencesMapCopy, referenceToKeysMapCopy);
+        this.name, this.keyMapper, this.reducer, this.comparisonPolicy, keyToReferencesMapCopy, referenceToKeysMapCopy);
   }
 
   private Set<K> generateKeys(final Reference<V> reference) throws IndexCreationException {
@@ -143,32 +143,35 @@ public class ReferenceIndex<K, V> implements Index<V> {
     try {
       item = reference.get();
     } catch (final RuntimeException e) {
-      throw new IndexCreationException("Index: " + name + ". Unable to retrieve item to index", e);
+      throw new IndexCreationException("Index: " + this.name + ". Unable to retrieve item to index", e);
     }
 
     try {
-      return keyMapper.map(item).stream()
+      for (final K key : this.keyMapper.map(item)) {
+
+      }
+      return this.keyMapper.map(item).stream()
           .map(this::getComparableKey)
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
     } catch (final RuntimeException e) {
       throw new IndexCreationException(
-          "Index: " + name + ". Error generating indexes for item: " + item, e);
+          "Index: " + this.name + ". Error generating indexes for item: " + item, e);
     }
   }
 
   private K getComparableKey(final Object key) {
-    if (key == null || !comparisonPolicy.supports(key.getClass())) {
+    if (key == null || !this.comparisonPolicy.supports(key.getClass())) {
       return null;
     }
 
     @SuppressWarnings("unchecked")
-    final K comparable = comparisonPolicy.createComparable((K) key);
+    final K comparable = this.comparisonPolicy.createComparable((K) key);
     return comparable;
   }
 
   @Override
   public String toString() {
-    return "Index[name='" + name + "']";
+    return "Index[name='" + this.name + "']";
   }
 }

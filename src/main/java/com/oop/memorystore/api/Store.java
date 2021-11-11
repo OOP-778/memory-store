@@ -61,7 +61,7 @@ public interface Store<V> extends Collection<V> {
      * @throws IndexException thrown if the creation of the new index fails with exceptions.
      */
     default <K> Index<V> index(final IndexDefinition<K, V> indexDefinition) throws IndexException {
-        return index(UUID.randomUUID().toString(), indexDefinition);
+        return this.index(UUID.randomUUID().toString(), indexDefinition);
     }
 
     /**
@@ -76,7 +76,7 @@ public interface Store<V> extends Collection<V> {
      */
     default <K> Index<V> index(final String indexName, final KeyMapper<K, V> keyMapper)
         throws IndexException {
-        return index(indexName, IndexDefinition.withKeyMapping(keyMapper));
+        return this.index(indexName, IndexDefinition.withKeyMapping(keyMapper));
     }
 
     /**
@@ -93,7 +93,7 @@ public interface Store<V> extends Collection<V> {
     default <K> Index<V> index(
         final String indexName, final KeyMapper<K, V> keyMapper, final Reducer<K, V> reducer)
         throws IndexException {
-        return index(indexName, IndexDefinition.withKeyMapping(keyMapper).withReducer(reducer));
+        return this.index(indexName, IndexDefinition.withKeyMapping(keyMapper).withReducer(reducer));
     }
 
     /**
@@ -108,7 +108,7 @@ public interface Store<V> extends Collection<V> {
      */
     default <K> Index<V> index(final KeyMapper<K, V> keyMapper, final Reducer<K, V> reducer)
         throws IndexException {
-        return index(IndexDefinition.withKeyMapping(keyMapper).withReducer(reducer));
+        return this.index(IndexDefinition.withKeyMapping(keyMapper).withReducer(reducer));
     }
 
     /**
@@ -121,7 +121,7 @@ public interface Store<V> extends Collection<V> {
      * @throws IndexException thrown if the new index failed with exceptions.
      */
     default <K> Index<V> index(final KeyMapper<K, V> keyMapper) throws IndexException {
-        return index(IndexDefinition.withKeyMapping(keyMapper));
+        return this.index(IndexDefinition.withKeyMapping(keyMapper));
     }
 
     /**
@@ -134,7 +134,7 @@ public interface Store<V> extends Collection<V> {
      * @return values associated with this key or an empty list
      */
     default List<V> get(final String indexName, final Object key, final int limit) {
-        return get(Query.where(indexName, key), limit);
+        return this.get(Query.where(indexName, key), limit);
     }
 
     /**
@@ -146,7 +146,7 @@ public interface Store<V> extends Collection<V> {
      * @return values associated with this key or an empty list
      */
     default List<V> get(final String indexName, final Object key) {
-        return get(Query.where(indexName, key), -1);
+        return this.get(Query.where(indexName, key), -1);
     }
 
     /**
@@ -158,7 +158,7 @@ public interface Store<V> extends Collection<V> {
      * @return first value associated with this key or null
      */
     default V getFirst(final String indexName, final Object key) {
-        return getFirst(Query.where(indexName, key));
+        return this.getFirst(Query.where(indexName, key));
     }
 
     /**
@@ -170,7 +170,7 @@ public interface Store<V> extends Collection<V> {
      * @return first value associated with this key or an empty optional
      */
     default Optional<V> findFirst(final String indexName, final Object key) {
-        return Optional.ofNullable(getFirst(indexName, key));
+        return Optional.ofNullable(this.getFirst(indexName, key));
     }
 
     /**
@@ -191,7 +191,7 @@ public interface Store<V> extends Collection<V> {
      */
     @Deprecated
     default List<V> get(final Query query) {
-        return get(query, -1);
+        return this.get(query, -1);
     }
 
     /**
@@ -201,7 +201,7 @@ public interface Store<V> extends Collection<V> {
      * @return first value matching the query
      */
     default V getFirst(final Query query) {
-        final List<V> results = get(query, 1);
+        final List<V> results = this.get(query, 1);
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -212,7 +212,7 @@ public interface Store<V> extends Collection<V> {
      * @return first value matching the query
      */
     default Optional<V> findFirst(final Query query) {
-        return Optional.ofNullable(getFirst(query));
+        return Optional.ofNullable(this.getFirst(query));
     }
 
     /**
@@ -235,7 +235,7 @@ public interface Store<V> extends Collection<V> {
      * Remove object by the query
      */
     default List<V> remove(final Query query) {
-        return remove(query, -1);
+        return this.remove(query, -1);
     }
 
     /**
@@ -247,7 +247,7 @@ public interface Store<V> extends Collection<V> {
      * Remove all indexes associated with this store
      */
     default void removeAllIndexes() {
-        new ArrayList<>(getIndexes()).forEach(this::removeIndex);
+        new ArrayList<>(this.getIndexes()).forEach(this::removeIndex);
     }
 
     /**
@@ -258,7 +258,7 @@ public interface Store<V> extends Collection<V> {
      * @return index optional
      */
     default Optional<Index<V>> findIndex(final String indexName) {
-        return Optional.ofNullable(getIndex(indexName));
+        return Optional.ofNullable(this.getIndex(indexName));
     }
 
     /**
@@ -311,7 +311,7 @@ public interface Store<V> extends Collection<V> {
      * @throws IndexException thrown if one or more indexes failed with exceptions.
      */
     default boolean addAll(final V[] items) throws IndexException {
-        return addAll(Arrays.asList(items));
+        return this.addAll(Arrays.asList(items));
     }
 
     /**

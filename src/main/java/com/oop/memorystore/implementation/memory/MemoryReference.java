@@ -16,11 +16,11 @@ public class MemoryReference<V> implements Reference<V> {
 
   @Override
   public V get() {
-    return reference;
+    return this.reference;
   }
 
   @Override
   public String toString() {
-    return String.valueOf(reference);
+    return String.valueOf(this.reference);
   }
 }

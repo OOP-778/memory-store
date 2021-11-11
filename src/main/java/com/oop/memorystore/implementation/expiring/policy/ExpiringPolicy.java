@@ -6,7 +6,7 @@ public interface ExpiringPolicy<V, T extends ExpiringPolicy.ExpirationData> {
 
   String named();
 
-  default T createExpirationData(V value) {
+  default T createExpirationData(final V value) {
     return null;
   }
 
@@ -18,5 +18,5 @@ public interface ExpiringPolicy<V, T extends ExpiringPolicy.ExpirationData> {
     return this::checkExpiration;
   }
 
-  static interface ExpirationData {}
+  interface ExpirationData {}
 }

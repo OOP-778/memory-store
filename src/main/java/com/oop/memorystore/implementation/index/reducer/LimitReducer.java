@@ -21,25 +21,25 @@ public class LimitReducer<K, V> implements Reducer<K, V> {
 
   @Override
   public void reduce(final K key, final List<Element<V>> elements) {
-    if (elements.size() <= limit) {
+    if (elements.size() <= this.limit) {
       return;
     }
 
-    if (retain == Retain.OLDEST) {
-      reduceOldest(elements);
-    } else if (retain == Retain.NEWEST) {
-      reduceNewest(elements);
+    if (this.retain == Retain.OLDEST) {
+        this.reduceOldest(elements);
+    } else if (this.retain == Retain.NEWEST) {
+        this.reduceNewest(elements);
     }
   }
 
   private void reduceNewest(final List<Element<V>> elements) {
-    for (int i = 0; i < (elements.size() - limit); i++) {
+    for (int i = 0; i < (elements.size() - this.limit); i++) {
       elements.get(i).remove();
     }
   }
 
   private void reduceOldest(final List<Element<V>> elements) {
-    for (int i = limit; i < elements.size(); i++) {
+    for (int i = this.limit; i < elements.size(); i++) {
       elements.get(i).remove();
     }
   }

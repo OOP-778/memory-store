@@ -8,18 +8,18 @@ public class TimedExpiringPolicy<V>
 
   private final Function<V, TimedExpirationData> expirationDataFunction;
 
-  protected TimedExpiringPolicy(Function<V, TimedExpirationData> expirationDataFunction) {
+  protected TimedExpiringPolicy(final Function<V, TimedExpirationData> expirationDataFunction) {
     this.expirationDataFunction = expirationDataFunction;
   }
 
   public static <V> ExpiringPolicy<V, TimedExpirationData> create(
-      long time, TimeUnit unit, boolean shouldResetAfterAccess) {
+      final long time, final TimeUnit unit, final boolean shouldResetAfterAccess) {
     return new TimedExpiringPolicy<>(
         $ -> new TimedExpirationData(unit, time, shouldResetAfterAccess));
   }
 
   public static <V> ExpiringPolicy<V, TimedExpirationData> create(
-      Function<V, TimedExpirationData> expirationDataFunction) {
+      final Function<V, TimedExpirationData> expirationDataFunction) {
     return new TimedExpiringPolicy<>(expirationDataFunction);
   }
 
@@ -29,17 +29,17 @@ public class TimedExpiringPolicy<V>
   }
 
   @Override
-  public TimedExpirationData createExpirationData(V value) {
-    return expirationDataFunction.apply(value);
+  public TimedExpirationData createExpirationData(final V value) {
+    return this.expirationDataFunction.apply(value);
   }
 
   @Override
-  public boolean checkExpiration(V value, TimedExpirationData data) {
+  public boolean checkExpiration(final V value, final TimedExpirationData data) {
     return (System.currentTimeMillis() - data.lastFetched) >= data.unit.toMillis(data.time);
   }
 
   @Override
-  public void onAccess(V value, TimedExpirationData data) {
+  public void onAccess(final V value, final TimedExpirationData data) {
       if (!data.shouldResetAfterAccess) {
           return;
       }
@@ -54,7 +54,7 @@ public class TimedExpiringPolicy<V>
     /** When was reference last fetched. By default it's set to it's creation time */
     private long lastFetched = System.currentTimeMillis();
 
-    public TimedExpirationData(TimeUnit unit, long time, boolean shouldResetAfterAccess) {
+    public TimedExpirationData(final TimeUnit unit, final long time, final boolean shouldResetAfterAccess) {
       this.unit = unit;
       this.time = time;
       this.shouldResetAfterAccess = shouldResetAfterAccess;

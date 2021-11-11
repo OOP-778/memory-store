@@ -22,7 +22,7 @@ class MultiReducer<K, V> implements Reducer<K, V> {
 
   @Override
   public void reduce(final K key, final List<Element<V>> elements) {
-    for (final Reducer<K, V> reducer : reducers) {
+    for (final Reducer<K, V> reducer : this.reducers) {
       reducer.reduce(
           key,
           elements.stream().filter(element -> !element.isRemoved()).collect(Collectors.toList()));
@@ -31,12 +31,12 @@ class MultiReducer<K, V> implements Reducer<K, V> {
 
   @Override
   public MultiReducer<K, V> andThen(final Reducer<K, V> reducer) {
-    final List<Reducer<K, V>> updatedReducers = new ArrayList<>(reducers);
+    final List<Reducer<K, V>> updatedReducers = new ArrayList<>(this.reducers);
     updatedReducers.add(reducer);
     return new MultiReducer<>(updatedReducers);
   }
 
   public List<Reducer<K, V>> getReducers() {
-    return Collections.unmodifiableList(reducers);
+    return Collections.unmodifiableList(this.reducers);
   }
 }

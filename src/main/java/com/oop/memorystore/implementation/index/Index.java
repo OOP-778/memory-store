@@ -17,7 +17,7 @@ public interface Index<V> {
    * @return optional
    */
   default V getFirst(final Object key) {
-    return findFirst(key).orElse(null);
+    return this.findFirst(key).orElse(null);
   }
 
   /**

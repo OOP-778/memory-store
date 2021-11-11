@@ -21,7 +21,7 @@ public class NullReducer<K, V> implements Reducer<K, V> {
   @Override
   public void reduce(final K key, final List<Element<V>> elements) {
     for (final Element<V> element : elements) {
-      if (valueProvider.apply(element.get()) == null) {
+      if (this.valueProvider.apply(element.get()) == null) {
         element.remove();
       }
     }

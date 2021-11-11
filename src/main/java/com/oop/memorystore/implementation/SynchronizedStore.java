@@ -31,9 +31,9 @@ public class SynchronizedStore<V> implements Store<V> {
   public Index<V> getIndex(final String indexName) {
     final Index<V> index;
 
-    synchronized (mutex) {
-      final Index<V> found = store.getIndex(indexName);
-      index = found == null ? null : new SynchronizedIndex<>(found, mutex);
+    synchronized (this.mutex) {
+      final Index<V> found = this.store.getIndex(indexName);
+      index = found == null ? null : new SynchronizedIndex<>(found, this.mutex);
     }
 
     return index;
@@ -43,10 +43,10 @@ public class SynchronizedStore<V> implements Store<V> {
   public Collection<Index<V>> getIndexes() {
     final List<Index<V>> indexes;
 
-    synchronized (mutex) {
+    synchronized (this.mutex) {
       indexes =
-          store.getIndexes().stream()
-              .map(index -> new SynchronizedIndex<>(index, mutex))
+          this.store.getIndexes().stream()
+              .map(index -> new SynchronizedIndex<>(index, this.mutex))
               .collect(Collectors.toList());
     }
 
@@ -54,16 +54,16 @@ public class SynchronizedStore<V> implements Store<V> {
   }
 
   @Override
-  public List<V> remove(Query query, int limit) {
-    synchronized (mutex) {
-      return store.remove(query, limit);
+  public List<V> remove(final Query query, final int limit) {
+    synchronized (this.mutex) {
+      return this.store.remove(query, limit);
     }
   }
 
   @Override
   public void removeAllIndexes() {
-    synchronized (mutex) {
-      store.removeAllIndexes();
+    synchronized (this.mutex) {
+        this.store.removeAllIndexes();
     }
   }
 
@@ -71,9 +71,9 @@ public class SynchronizedStore<V> implements Store<V> {
   public Optional<Index<V>> findIndex(final String indexName) {
     final Optional<Index<V>> optionalIndex;
 
-    synchronized (mutex) {
+    synchronized (this.mutex) {
       optionalIndex =
-          store.findIndex(indexName).map(index -> new SynchronizedIndex<>(index, mutex));
+          this.store.findIndex(indexName).map(index -> new SynchronizedIndex<>(index, this.mutex));
     }
 
     return optionalIndex;
@@ -83,11 +83,11 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean removeIndex(final Index<V> index) {
     final boolean removed;
 
-    synchronized (mutex) {
+    synchronized (this.mutex) {
       if (index instanceof SynchronizedIndex) {
-        removed = store.removeIndex(((SynchronizedIndex<V>) index).getIndex());
+        removed = this.store.removeIndex(((SynchronizedIndex<V>) index).getIndex());
       } else {
-        removed = store.removeIndex(index);
+        removed = this.store.removeIndex(index);
       }
     }
 
@@ -98,8 +98,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean removeIndex(final String indexName) {
     final boolean removed;
 
-    synchronized (mutex) {
-      removed = store.removeIndex(indexName);
+    synchronized (this.mutex) {
+      removed = this.store.removeIndex(indexName);
     }
 
     return removed;
@@ -110,8 +110,8 @@ public class SynchronizedStore<V> implements Store<V> {
       throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(indexName, indexDefinition);
+    synchronized (this.mutex) {
+      index = this.store.index(indexName, indexDefinition);
     }
 
     return index;
@@ -121,8 +121,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public <K> Index<V> index(final IndexDefinition<K, V> indexDefinition) throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(indexDefinition);
+    synchronized (this.mutex) {
+      index = this.store.index(indexDefinition);
     }
 
     return index;
@@ -133,8 +133,8 @@ public class SynchronizedStore<V> implements Store<V> {
       throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(indexName, keyMapper);
+    synchronized (this.mutex) {
+      index = this.store.index(indexName, keyMapper);
     }
 
     return index;
@@ -144,8 +144,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public <K> Index<V> index(final KeyMapper<K, V> keyMapper) throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(keyMapper);
+    synchronized (this.mutex) {
+      index = this.store.index(keyMapper);
     }
 
     return index;
@@ -157,8 +157,8 @@ public class SynchronizedStore<V> implements Store<V> {
       throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(indexName, keyMapper, reducer);
+    synchronized (this.mutex) {
+      index = this.store.index(indexName, keyMapper, reducer);
     }
 
     return index;
@@ -169,8 +169,8 @@ public class SynchronizedStore<V> implements Store<V> {
       throws IndexException {
     final Index<V> index;
 
-    synchronized (mutex) {
-      index = store.index(keyMapper, reducer);
+    synchronized (this.mutex) {
+      index = this.store.index(keyMapper, reducer);
     }
 
     return index;
@@ -180,8 +180,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public List<V> get(final String indexName, final Object key, final int limit) {
     final List<V> results;
 
-    synchronized (mutex) {
-      results = store.get(indexName, key, limit);
+    synchronized (this.mutex) {
+      results = this.store.get(indexName, key, limit);
     }
 
     return results;
@@ -191,8 +191,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public List<V> get(final String indexName, final Object key) {
     final List<V> results;
 
-    synchronized (mutex) {
-      results = store.get(indexName, key);
+    synchronized (this.mutex) {
+      results = this.store.get(indexName, key);
     }
 
     return results;
@@ -202,8 +202,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public V getFirst(final String indexName, final Object key) {
     final V result;
 
-    synchronized (mutex) {
-      result = store.getFirst(indexName, key);
+    synchronized (this.mutex) {
+      result = this.store.getFirst(indexName, key);
     }
 
     return result;
@@ -213,8 +213,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public Optional<V> findFirst(final String indexName, final Object key) {
     final Optional<V> result;
 
-    synchronized (mutex) {
-      result = store.findFirst(indexName, key);
+    synchronized (this.mutex) {
+      result = this.store.findFirst(indexName, key);
     }
 
     return result;
@@ -224,8 +224,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public List<V> get(final Query query, final int limit) {
     final List<V> results;
 
-    synchronized (mutex) {
-      results = store.get(query, limit);
+    synchronized (this.mutex) {
+      results = this.store.get(query, limit);
     }
 
     return results;
@@ -235,8 +235,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public List<V> get(final Query query) {
     final List<V> results;
 
-    synchronized (mutex) {
-      results = store.get(query);
+    synchronized (this.mutex) {
+      results = this.store.get(query);
     }
 
     return results;
@@ -246,8 +246,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public V getFirst(final Query query) {
     final V result;
 
-    synchronized (mutex) {
-      result = store.getFirst(query);
+    synchronized (this.mutex) {
+      result = this.store.getFirst(query);
     }
 
     return result;
@@ -257,8 +257,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public Optional<V> findFirst(final Query query) {
     final Optional<V> result;
 
-    synchronized (mutex) {
-      result = store.findFirst(query);
+    synchronized (this.mutex) {
+      result = this.store.findFirst(query);
     }
 
     return result;
@@ -266,22 +266,22 @@ public class SynchronizedStore<V> implements Store<V> {
 
   @Override
   public void reindex() {
-    synchronized (mutex) {
-      store.reindex();
+    synchronized (this.mutex) {
+        this.store.reindex();
     }
   }
 
   @Override
   public void reindex(final Collection<V> items) {
-    synchronized (mutex) {
-      store.reindex(items);
+    synchronized (this.mutex) {
+        this.store.reindex(items);
     }
   }
 
   @Override
   public void reindex(final V item) {
-    synchronized (mutex) {
-      store.reindex(item);
+    synchronized (this.mutex) {
+        this.store.reindex(item);
     }
   }
 
@@ -289,8 +289,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public Store<V> copy() {
     final Store<V> copy;
 
-    synchronized (mutex) {
-      copy = store.copy();
+    synchronized (this.mutex) {
+      copy = this.store.copy();
     }
 
     return copy;
@@ -300,8 +300,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public int size() {
     final int size;
 
-    synchronized (mutex) {
-      size = store.size();
+    synchronized (this.mutex) {
+      size = this.store.size();
     }
 
     return size;
@@ -311,8 +311,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean isEmpty() {
     final boolean empty;
 
-    synchronized (mutex) {
-      empty = store.isEmpty();
+    synchronized (this.mutex) {
+      empty = this.store.isEmpty();
     }
 
     return empty;
@@ -322,8 +322,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean contains(final Object obj) {
     final boolean contains;
 
-    synchronized (mutex) {
-      contains = store.contains(obj);
+    synchronized (this.mutex) {
+      contains = this.store.contains(obj);
     }
 
     return contains;
@@ -331,15 +331,15 @@ public class SynchronizedStore<V> implements Store<V> {
 
   @Override
   public Iterator<V> iterator() {
-    return store.iterator();
+    return this.store.iterator();
   }
 
   @Override
   public Object[] toArray() {
     final Object[] array;
 
-    synchronized (mutex) {
-      array = store.toArray();
+    synchronized (this.mutex) {
+      array = this.store.toArray();
     }
 
     return array;
@@ -349,8 +349,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public <T1> T1[] toArray(final T1[] array) {
     final T1[] toArray;
 
-    synchronized (mutex) {
-      toArray = store.toArray(array);
+    synchronized (this.mutex) {
+      toArray = this.store.toArray(array);
     }
 
     return toArray;
@@ -360,8 +360,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean add(final V item) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.add(item);
+    synchronized (this.mutex) {
+      result = this.store.add(item);
     }
 
     return result;
@@ -371,8 +371,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean remove(final Object obj) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.remove(obj);
+    synchronized (this.mutex) {
+      result = this.store.remove(obj);
     }
 
     return result;
@@ -382,8 +382,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean containsAll(final Collection<?> collection) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.containsAll(collection);
+    synchronized (this.mutex) {
+      result = this.store.containsAll(collection);
     }
 
     return result;
@@ -393,8 +393,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean addAll(final Collection<? extends V> collection) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.addAll(collection);
+    synchronized (this.mutex) {
+      result = this.store.addAll(collection);
     }
 
     return result;
@@ -404,8 +404,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean addAll(final V[] items) throws IndexException {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.addAll(items);
+    synchronized (this.mutex) {
+      result = this.store.addAll(items);
     }
 
     return result;
@@ -415,8 +415,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean removeAll(final Collection<?> collection) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.removeAll(collection);
+    synchronized (this.mutex) {
+      result = this.store.removeAll(collection);
     }
 
     return result;
@@ -426,8 +426,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean removeIf(final Predicate<? super V> filter) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.removeIf(filter);
+    synchronized (this.mutex) {
+      result = this.store.removeIf(filter);
     }
 
     return result;
@@ -437,8 +437,8 @@ public class SynchronizedStore<V> implements Store<V> {
   public boolean retainAll(final Collection<?> collection) {
     final boolean result;
 
-    synchronized (mutex) {
-      result = store.retainAll(collection);
+    synchronized (this.mutex) {
+      result = this.store.retainAll(collection);
     }
 
     return result;
@@ -446,13 +446,13 @@ public class SynchronizedStore<V> implements Store<V> {
 
   @Override
   public void clear() {
-    synchronized (mutex) {
-      store.clear();
+    synchronized (this.mutex) {
+        this.store.clear();
     }
   }
 
   public Store<V> getStore() {
-    return store;
+    return this.store;
   }
 
   @Override
@@ -461,9 +461,9 @@ public class SynchronizedStore<V> implements Store<V> {
   }
 
   @Override
-  public void lockIndexing(boolean lockIndexing) {
-    synchronized (mutex) {
-      store.lockIndexing(lockIndexing);
+  public void lockIndexing(final boolean lockIndexing) {
+    synchronized (this.mutex) {
+        this.store.lockIndexing(lockIndexing);
     }
   }
 
@@ -474,6 +474,6 @@ public class SynchronizedStore<V> implements Store<V> {
 
   @Override
   public String toString() {
-    return store.toString();
+    return this.store.toString();
   }
 }

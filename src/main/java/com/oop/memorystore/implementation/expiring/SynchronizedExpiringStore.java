@@ -8,19 +8,19 @@ import com.oop.memorystore.implementation.SynchronizedStore;
 
 public class SynchronizedExpiringStore<V> extends SynchronizedStore<V> implements ExpiringStore<V> {
 
-    public SynchronizedExpiringStore(ExpiringMemoryStore<V> store) {
+    public SynchronizedExpiringStore(final ExpiringMemoryStore<V> store) {
         super(store);
     }
 
     @Override
     public ExpirationManager<V> getExpirationManager() {
-        return ((ExpiringMemoryStore<V>) store).getExpirationManager();
+        return ((ExpiringMemoryStore<V>) this.store).getExpirationManager();
     }
 
     @Override
     public void invalidate() {
-        synchronized (mutex) {
-            ((ExpiringMemoryStore<V>) store).invalidate();
+        synchronized (this.mutex) {
+            ((ExpiringMemoryStore<V>) this.store).invalidate();
         }
     }
 }

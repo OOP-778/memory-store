@@ -12,10 +12,10 @@ public class QueryDefinition {
   }
 
   public List<IndexMatch> getIndexMatches() {
-    return indexMatches;
+    return this.indexMatches;
   }
 
   public Operator getOperator() {
-    return operator;
+    return this.operator;
   }
 }

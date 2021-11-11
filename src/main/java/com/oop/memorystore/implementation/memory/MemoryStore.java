@@ -30,13 +30,13 @@ public class MemoryStore<V> extends AbstractStore<V> {
 
   public MemoryStore(final Collection<V> items) {
     this();
-    addAll(items);
+      this.addAll(items);
   }
 
   @SafeVarargs
   public MemoryStore(final V... items) {
     this();
-    addAll(items);
+      this.addAll(items);
   }
 
   /**
@@ -69,6 +69,6 @@ public class MemoryStore<V> extends AbstractStore<V> {
 
   @Override
   public String toString() {
-    return getReferenceManager().getReferences().toString();
+    return this.getReferenceManager().getReferences().toString();
   }
 }

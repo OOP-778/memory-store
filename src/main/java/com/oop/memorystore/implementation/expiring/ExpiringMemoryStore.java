@@ -26,7 +26,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
 
   private final DefaultExpirationManager<V> expirationManager;
 
-  public ExpiringMemoryStore(ExpiringPolicy<V, ?> ...policies) {
+  public ExpiringMemoryStore(final ExpiringPolicy<V, ?> ...policies) {
     super(
         new DefaultReferenceManager<>(
             new DefaultIdentityProvider(), new ExpiringReferenceFactory<>()),
@@ -35,17 +35,17 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
   }
 
   protected ExpiringMemoryStore(
-      ReferenceManager<V> referenceManager,
-      IndexManager<V> indexManager,
-      DefaultExpirationManager<V> defaultExpirationManager) {
+      final ReferenceManager<V> referenceManager,
+      final IndexManager<V> indexManager,
+      final DefaultExpirationManager<V> defaultExpirationManager) {
     super(referenceManager, indexManager);
     this.expirationManager = defaultExpirationManager;
   }
 
   @Override
   protected Store<V> createCopy(
-      ReferenceManager<V> referenceManager, IndexManager<V> indexManager) {
-    return new ExpiringMemoryStore<>(referenceManager.copy(), indexManager.copy(), expirationManager.copy());
+      final ReferenceManager<V> referenceManager, final IndexManager<V> indexManager) {
+    return new ExpiringMemoryStore<>(referenceManager.copy(), indexManager.copy(), this.expirationManager.copy());
   }
 
   @Override
@@ -58,7 +58,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
     boolean firstMatch = true;
 
     for (final IndexMatch indexMatch : indexMatches) {
-      final ReferenceIndex<?, V> referenceIndex = indexManager.getIndex(indexMatch.getIndexName());
+      final ReferenceIndex<?, V> referenceIndex = this.indexManager.getIndex(indexMatch.getIndexName());
       if (referenceIndex == null) continue;
 
       final Set<Reference<V>> references =
@@ -68,7 +68,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
 
       references.removeIf(
           reference -> {
-            boolean shouldBeInvalidated = expirationManager.checkExpiration(reference.get());
+            final boolean shouldBeInvalidated = this.expirationManager.checkExpiration(reference.get());
             if (shouldBeInvalidated) {
               referenceIndex.removeIndex(reference);
             }
@@ -85,7 +85,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
     }
 
     return results.stream()
-        .peek(reference -> expirationManager.onAccess(reference.get()))
+        .peek(reference -> this.expirationManager.onAccess(reference.get()))
         .map(Reference::get)
         .limit(limit == -1 ? Long.MAX_VALUE : limit)
         .collect(Collectors.toList());
@@ -93,19 +93,19 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
 
   @Override
   public ExpirationManager<V> getExpirationManager() {
-    return expirationManager;
+    return this.expirationManager;
   }
 
   @Override
   public void invalidate() {
-    Iterator<Reference<V>> iterator = referenceManager.getReferences().iterator();
+    final Iterator<Reference<V>> iterator = this.referenceManager.getReferences().iterator();
     while (iterator.hasNext()) {
-      MemoryReference<V> next = (MemoryReference<V>) iterator.next();
-      if (!expirationManager.checkExpiration(next.get())) {
+      final MemoryReference<V> next = (MemoryReference<V>) iterator.next();
+      if (!this.expirationManager.checkExpiration(next.get())) {
         continue;
       }
 
-      indexManager.removeReference(next);
+      this.indexManager.removeReference(next);
       iterator.remove();
     }
   }

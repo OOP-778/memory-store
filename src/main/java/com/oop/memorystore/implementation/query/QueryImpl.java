@@ -9,20 +9,20 @@ class QueryImpl implements BasicQuery, AndQuery, OrQuery {
 
   @Override
   public AndQuery and(final String indexName, final Object key) {
-    indexMatches.add(new IndexMatch(indexName, key));
-    operator = Operator.AND;
+      this.indexMatches.add(new IndexMatch(indexName, key));
+      this.operator = Operator.AND;
     return this;
   }
 
   @Override
   public OrQuery or(final String indexName, final Object key) {
-    indexMatches.add(new IndexMatch(indexName, key));
-    operator = Operator.OR;
+      this.indexMatches.add(new IndexMatch(indexName, key));
+      this.operator = Operator.OR;
     return this;
   }
 
   @Override
   public QueryDefinition build() {
-    return new QueryDefinition(indexMatches, operator);
+    return new QueryDefinition(this.indexMatches, this.operator);
   }
 }

@@ -17,8 +17,8 @@ public class SynchronizedIndex<T> implements Index<T> {
     public T getFirst(final Object key) {
         final T result;
 
-        synchronized (mutex) {
-            result = index.getFirst(key);
+        synchronized (this.mutex) {
+            result = this.index.getFirst(key);
         }
 
         return result;
@@ -28,8 +28,8 @@ public class SynchronizedIndex<T> implements Index<T> {
     public Optional<T> findFirst(final Object key) {
         final Optional<T> result;
 
-        synchronized (mutex) {
-            result = index.findFirst(key);
+        synchronized (this.mutex) {
+            result = this.index.findFirst(key);
         }
 
         return result;
@@ -39,8 +39,8 @@ public class SynchronizedIndex<T> implements Index<T> {
     public List<T> get(final Object key) {
         final List<T> results;
 
-        synchronized (mutex) {
-            results = index.get(key);
+        synchronized (this.mutex) {
+            results = this.index.get(key);
         }
 
         return results;
@@ -48,7 +48,7 @@ public class SynchronizedIndex<T> implements Index<T> {
 
     @Override
     public String getName() {
-        return index.getName();
+        return this.index.getName();
     }
 
     @Override
@@ -57,25 +57,25 @@ public class SynchronizedIndex<T> implements Index<T> {
             return true;
         }
 
-        if (other == null || getClass() != other.getClass()) {
+        if (other == null || this.getClass() != other.getClass()) {
             return false;
         }
 
         final SynchronizedIndex<?> that = (SynchronizedIndex<?>) other;
-        return Objects.equals(index, that.index);
+        return Objects.equals(this.index, that.index);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(index);
+        return Objects.hash(this.index);
     }
 
     @Override
     public String toString() {
-        return String.valueOf(index);
+        return String.valueOf(this.index);
     }
 
     public Index<T> getIndex() {
-        return index;
+        return this.index;
     }
 }

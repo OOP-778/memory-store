@@ -11,12 +11,12 @@ public class UnmodifiableIterator<V> implements Iterator<V> {
 
   @Override
   public boolean hasNext() {
-    return iterator.hasNext();
+    return this.iterator.hasNext();
   }
 
   @Override
   public V next() {
-    return iterator.next();
+    return this.iterator.next();
   }
 
   @Override

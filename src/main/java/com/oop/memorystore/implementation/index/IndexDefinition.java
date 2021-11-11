@@ -87,14 +87,14 @@ public final class IndexDefinition<K, V> {
   }
 
   KeyMapper<Collection<K>, V> getKeyMapper() {
-    return keyMapper;
+    return this.keyMapper;
   }
 
   ComparisonPolicy<K> getComparisonPolicy() {
-    return comparisonPolicy;
+    return this.comparisonPolicy;
   }
 
   Reducer<K, V> getReducer() {
-    return reducer;
+    return this.reducer;
   }
 }

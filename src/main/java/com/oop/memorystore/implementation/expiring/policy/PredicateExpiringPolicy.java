@@ -10,8 +10,8 @@ public class PredicateExpiringPolicy<V>
 
   private final List<Predicate<V>> expirers = new LinkedList<>();
 
-  public static <V> PredicateExpiringPolicy<V> create(Predicate<V>... filters) {
-    PredicateExpiringPolicy<V> objectPredicateExpiringPolicy = new PredicateExpiringPolicy<>();
+  public static <V> PredicateExpiringPolicy<V> create(final Predicate<V>... filters) {
+    final PredicateExpiringPolicy<V> objectPredicateExpiringPolicy = new PredicateExpiringPolicy<>();
     objectPredicateExpiringPolicy.expirers.addAll(Arrays.asList(filters));
     return objectPredicateExpiringPolicy;
   }
@@ -22,13 +22,13 @@ public class PredicateExpiringPolicy<V>
   }
 
   @Override
-  public EmptyExpirationData createExpirationData(V value) {
+  public EmptyExpirationData createExpirationData(final V value) {
     return null;
   }
 
   @Override
-  public boolean checkExpiration(V value, EmptyExpirationData data) {
-    for (Predicate<V> expirer : expirers) {
+  public boolean checkExpiration(final V value, final EmptyExpirationData data) {
+    for (final Predicate<V> expirer : this.expirers) {
         if (expirer.test(value)) {
             return true;
         }
@@ -38,7 +38,7 @@ public class PredicateExpiringPolicy<V>
   }
 
   @Override
-  public void onAccess(V value, EmptyExpirationData data) {}
+  public void onAccess(final V value, final EmptyExpirationData data) {}
 
   public static class EmptyExpirationData implements ExpiringPolicy.ExpirationData {}
 }

@@ -35,60 +35,60 @@ public class DefaultReferenceManager<V> implements ReferenceManager<V> {
 
   @Override
   public Collection<Reference<V>> getReferences() {
-    return referenceMap.values();
+    return this.referenceMap.values();
   }
 
   @Override
   public Optional<Reference<V>> findReference(final Object item) {
-    final Object identity = identityProvider.getIdentity(item);
+    final Object identity = this.identityProvider.getIdentity(item);
 
     if (identity == null) {
       return Optional.empty();
     }
 
-    return Optional.ofNullable(referenceMap.get(identity));
+    return Optional.ofNullable(this.referenceMap.get(identity));
   }
 
   @Override
   public int size() {
-    return referenceMap.size();
+    return this.referenceMap.size();
   }
 
   @Override
   public void clear() {
-    referenceMap.clear();
+      this.referenceMap.clear();
   }
 
   @Override
   public Reference<V> add(final V item) {
-    final Object identity = identityProvider.getIdentity(item);
+    final Object identity = this.identityProvider.getIdentity(item);
 
     if (identity == null) {
       return null;
     }
 
-    if (referenceMap.containsKey(identity)) {
-      return referenceMap.get(identity);
+    if (this.referenceMap.containsKey(identity)) {
+      return this.referenceMap.get(identity);
     }
 
-    final Reference<V> reference = referenceFactory.createReference(item);
-    referenceMap.put(identity, reference);
+    final Reference<V> reference = this.referenceFactory.createReference(item);
+      this.referenceMap.put(identity, reference);
     return reference;
   }
 
   @Override
   public ReferenceManager<V> copy() {
-    return new DefaultReferenceManager<>(identityProvider, referenceFactory, referenceMap);
+    return new DefaultReferenceManager<>(this.identityProvider, this.referenceFactory, this.referenceMap);
   }
 
   @Override
   public Reference<V> remove(final Object item) {
-    final Object identity = identityProvider.getIdentity(item);
+    final Object identity = this.identityProvider.getIdentity(item);
 
     if (identity == null) {
       return null;
     }
 
-    return referenceMap.remove(identity);
+    return this.referenceMap.remove(identity);
   }
 }

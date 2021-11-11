@@ -21,7 +21,7 @@ public class FilteredReducer<K, V> implements Reducer<K, V> {
   @Override
   public void reduce(final K key, final List<Element<V>> elements) {
     for (final Element<V> element : elements) {
-      if (predicate.test(element.get())) {
+      if (this.predicate.test(element.get())) {
         element.remove();
       }
     }

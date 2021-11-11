@@ -62,42 +62,42 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public List<V> get(final String indexName, final Object key, final int limit) {
-    return store.get(indexName, key, limit);
+    return this.store.get(indexName, key, limit);
   }
 
   @Override
   public List<V> get(final String indexName, final Object key) {
-    return store.get(indexName, key);
+    return this.store.get(indexName, key);
   }
 
   @Override
   public V getFirst(final String indexName, final Object key) {
-    return store.getFirst(indexName, key);
+    return this.store.getFirst(indexName, key);
   }
 
   @Override
   public Optional<V> findFirst(final String indexName, final Object key) {
-    return store.findFirst(indexName, key);
+    return this.store.findFirst(indexName, key);
   }
 
   @Override
   public List<V> get(final Query query, final int limit) {
-    return store.get(query, limit);
+    return this.store.get(query, limit);
   }
 
   @Override
   public List<V> get(final Query query) {
-    return store.get(query);
+    return this.store.get(query);
   }
 
   @Override
   public V getFirst(final Query query) {
-    return store.getFirst(query);
+    return this.store.getFirst(query);
   }
 
   @Override
   public Optional<V> findFirst(final Query query) {
-    return store.findFirst(query);
+    return this.store.findFirst(query);
   }
 
   @Override
@@ -107,7 +107,7 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public Optional<Index<V>> findIndex(final String indexName) {
-    return store.findIndex(indexName);
+    return this.store.findIndex(indexName);
   }
 
   @Override
@@ -117,31 +117,31 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public Store<V> synchronizedStore() {
-    return store.synchronizedStore().unmodifiableStore();
+    return this.store.synchronizedStore().unmodifiableStore();
   }
 
   @Override
-  public void lockIndexing(boolean lockIndexing) {
+  public void lockIndexing(final boolean lockIndexing) {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public StoreQuery<V> createQuery() {
-    return store.createQuery();
+    return this.store.createQuery();
   }
 
   @Override
   public Index<V> getIndex(final String indexName) {
-    return store.getIndex(indexName);
+    return this.store.getIndex(indexName);
   }
 
   @Override
   public Collection<Index<V>> getIndexes() {
-    return store.getIndexes();
+    return this.store.getIndexes();
   }
 
   @Override
-  public List<V> remove(Query query, int limit) {
+  public List<V> remove(final Query query, final int limit) {
     throw new UnsupportedOperationException();
   }
 
@@ -177,32 +177,32 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public int size() {
-    return store.size();
+    return this.store.size();
   }
 
   @Override
   public boolean isEmpty() {
-    return store.isEmpty();
+    return this.store.isEmpty();
   }
 
   @Override
   public boolean contains(final Object obj) {
-    return store.contains(obj);
+    return this.store.contains(obj);
   }
 
   @Override
   public Iterator<V> iterator() {
-    return new UnmodifiableIterator<>(store.iterator());
+    return new UnmodifiableIterator<>(this.store.iterator());
   }
 
   @Override
   public Object[] toArray() {
-    return store.toArray();
+    return this.store.toArray();
   }
 
   @Override
   public <T1> T1[] toArray(final T1[] array) {
-    return store.toArray(array);
+    return this.store.toArray(array);
   }
 
   @Override
@@ -217,7 +217,7 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public boolean containsAll(final Collection<?> collection) {
-    return store.containsAll(collection);
+    return this.store.containsAll(collection);
   }
 
   @Override
@@ -247,7 +247,7 @@ public class UnmodifiableStore<V> implements Store<V> {
 
   @Override
   public Store<V> copy() {
-    return store.copy();
+    return this.store.copy();
   }
 
   @Override
@@ -256,21 +256,21 @@ public class UnmodifiableStore<V> implements Store<V> {
       return true;
     }
 
-    if (obj == null || getClass() != obj.getClass()) {
+    if (obj == null || this.getClass() != obj.getClass()) {
       return false;
     }
 
     final UnmodifiableStore<?> that = (UnmodifiableStore<?>) obj;
-    return Objects.equals(store, that.store);
+    return Objects.equals(this.store, that.store);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(store);
+    return Objects.hash(this.store);
   }
 
   @Override
   public String toString() {
-    return store.toString();
+    return this.store.toString();
   }
 }
