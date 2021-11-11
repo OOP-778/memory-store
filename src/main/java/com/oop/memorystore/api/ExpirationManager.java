@@ -11,5 +11,5 @@ public interface ExpirationManager<V> {
 
     boolean checkExpiration(V value);
 
-    ExpirationData getExpirationData(final V value, final Class<? extends ExpiringPolicy<?, ?>> policyClass);
+    <T extends ExpirationData, E extends ExpiringPolicy> T getExpirationData(final V value, final Class<E> policyClass);
 }

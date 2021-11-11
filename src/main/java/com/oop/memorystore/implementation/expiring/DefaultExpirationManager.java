@@ -73,13 +73,13 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         }
     }
 
-    public ExpirationData getExpirationData(final V value, final Class<? extends ExpiringPolicy<?, ?>> policyClass) {
+    public <T extends ExpirationData, E extends ExpiringPolicy> T getExpirationData(final V value, final Class<E> policyClass) {
         for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyEntry : this.policyData.entrySet()) {
             if (!policyClass.isAssignableFrom(policyEntry.getKey().getClass())) {
                 continue;
             }
 
-            return policyEntry.getValue().get(value);
+            return (T) policyEntry.getValue().get(value);
         }
 
         return null;
