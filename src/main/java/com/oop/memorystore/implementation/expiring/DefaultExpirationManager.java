@@ -54,8 +54,11 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
     }
 
     public void onRemove(final V value) {
-        for (final Map<V, ExpiringPolicy.ExpirationData> policyData : this.policyData.values()) {
-            policyData.remove(value);
+        for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyData : this.policyData.entrySet()) {
+            policyData.getValue().remove(value);
+
+            final ExpiringPolicy policy = policyData.getKey();
+            policy.onExpire(value);
         }
     }
 
