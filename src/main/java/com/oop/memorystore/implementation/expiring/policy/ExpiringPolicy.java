@@ -1,6 +1,5 @@
 package com.oop.memorystore.implementation.expiring.policy;
 
-import com.sun.istack.internal.NotNull;
 import java.util.function.BiPredicate;
 
 public interface ExpiringPolicy<V, T extends ExpiringPolicy.ExpirationData> {
@@ -15,7 +14,7 @@ public interface ExpiringPolicy<V, T extends ExpiringPolicy.ExpirationData> {
 
     void onAccess(V value, T data);
 
-    default void onExpire(@NotNull final V value) {
+    default void onExpire(final V value) {
     }
 
     default BiPredicate<V, T> checkExpiration() {
