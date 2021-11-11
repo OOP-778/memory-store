@@ -3,7 +3,6 @@ package com.oop.memorystore.implementation.expiring;
 import com.oop.memorystore.api.ExpirationManager;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy.ExpirationData;
-import com.sun.istack.internal.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,7 +70,7 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         }
     }
 
-    public ExpirationData getExpirationData(final V value, @NotNull final Class<? extends ExpiringPolicy<?, ?>> policyClass) {
+    public ExpirationData getExpirationData(final V value, final Class<? extends ExpiringPolicy<?, ?>> policyClass) {
         for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyEntry : this.policyData.entrySet()) {
             if (!policyClass.isAssignableFrom(policyEntry.getKey().getClass())) {
                 continue;
