@@ -2,7 +2,6 @@ package com.oop.memorystore.api;
 
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy.ExpirationData;
-import com.sun.istack.internal.NotNull;
 
 public interface ExpirationManager<V> {
 
@@ -12,5 +11,5 @@ public interface ExpirationManager<V> {
 
     boolean checkExpiration(V value);
 
-    ExpirationData getExpirationData(final V value, @NotNull final Class<? extends ExpiringPolicy<?, ?>> policyClass);
+    ExpirationData getExpirationData(final V value, final Class<? extends ExpiringPolicy<?, ?>> policyClass);
 }
