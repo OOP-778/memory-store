@@ -82,9 +82,9 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
             }
 
             final Set<Reference<V>> references =
-                Optional.of(referenceIndex)
+                new HashSet<>(Optional.of(referenceIndex)
                     .map(index -> index.getReferences(indexMatch.getKey()))
-                    .orElse(new HashSet<>());
+                    .orElse(new HashSet<>()));
 
             references.removeIf(
                 reference -> {
