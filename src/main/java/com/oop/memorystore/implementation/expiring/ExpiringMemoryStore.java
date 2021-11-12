@@ -18,7 +18,7 @@ import com.oop.memorystore.implementation.query.QueryDefinition;
 import com.oop.memorystore.implementation.reference.DefaultReferenceManager;
 import com.oop.memorystore.implementation.reference.Reference;
 import com.oop.memorystore.implementation.reference.ReferenceManager;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -77,14 +77,14 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
 
         for (final IndexMatch indexMatch : indexMatches) {
             final ReferenceIndex<?, V> referenceIndex = this.indexManager.getIndex(indexMatch.getIndexName());
-          if (referenceIndex == null) {
-            continue;
-          }
+            if (referenceIndex == null) {
+                continue;
+            }
 
             final Set<Reference<V>> references =
                 Optional.of(referenceIndex)
                     .map(index -> index.getReferences(indexMatch.getKey()))
-                    .orElse(Collections.emptySet());
+                    .orElse(new HashSet<>());
 
             references.removeIf(
                 reference -> {
