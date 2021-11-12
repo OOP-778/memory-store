@@ -105,9 +105,29 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
         continue;
       }
 
-      this.indexManager.removeReference(next);
+      super.remove(next.get());
       iterator.remove();
     }
+  }
+
+  @Override
+  public boolean add(final V item) {
+    final boolean added = super.add(item);
+    if (added) {
+      this.expirationManager.onAdd(item);
+    }
+
+    return added;
+  }
+
+  @Override
+  public boolean remove(final Object obj) {
+    final boolean removed = super.remove(obj);
+    if (removed) {
+      this.expirationManager.onRemove((V) obj);
+    }
+
+    return removed;
   }
 
   @Override

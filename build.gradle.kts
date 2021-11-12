@@ -4,7 +4,7 @@ plugins {
     `maven-publish`
 }
 
-val mavenVersion = "1.5"
+val mavenVersion = "1.6"
 
 tasks {
     build.get().dependsOn(shadowJar)
