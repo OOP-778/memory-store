@@ -40,6 +40,18 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         return shouldExpire;
     }
 
+    public <T extends ExpirationData, E extends ExpiringPolicy> T getExpirationData(final V value, final Class<E> policyClass) {
+        for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyEntry : this.policyData.entrySet()) {
+            if (!policyClass.isAssignableFrom(policyEntry.getKey().getClass())) {
+                continue;
+            }
+
+            return (T) policyEntry.getValue().get(value);
+        }
+
+        return null;
+    }
+
     public void onAdd(final V value) {
         for (final Map.Entry<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyEntry :
             this.policyData.entrySet()) {
@@ -56,9 +68,6 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
     public void onRemove(final V value) {
         for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyData : this.policyData.entrySet()) {
             policyData.getValue().remove(value);
-
-            final ExpiringPolicy policy = policyData.getKey();
-            policy.onExpire(value);
         }
     }
 
@@ -73,19 +82,13 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         }
     }
 
-    public <T extends ExpirationData, E extends ExpiringPolicy> T getExpirationData(final V value, final Class<E> policyClass) {
-        for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyEntry : this.policyData.entrySet()) {
-            if (!policyClass.isAssignableFrom(policyEntry.getKey().getClass())) {
-                continue;
-            }
-
-            return (T) policyEntry.getValue().get(value);
-        }
-
-        return null;
-    }
-
     public DefaultExpirationManager<V> copy() {
         return new DefaultExpirationManager<>(this.policyData.keySet().toArray(new ExpiringPolicy[0]));
+    }
+
+    public void onExpire(final V value) {
+        for (final ExpiringPolicy<V, ?> policy : this.policyData.keySet()) {
+            policy.onExpire(value);
+        }
     }
 }

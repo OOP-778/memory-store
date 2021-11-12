@@ -18,6 +18,7 @@ import com.oop.memorystore.implementation.query.QueryDefinition;
 import com.oop.memorystore.implementation.reference.DefaultReferenceManager;
 import com.oop.memorystore.implementation.reference.Reference;
 import com.oop.memorystore.implementation.reference.ReferenceManager;
+import com.sun.istack.internal.NotNull;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,7 +91,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
                 reference -> {
                     final boolean shouldBeInvalidated = this.expirationManager.checkExpiration(reference.get());
                     if (shouldBeInvalidated) {
-                        referenceIndex.removeIndex(reference);
+                        this.invalidate(reference.get());
                     }
 
                     return shouldBeInvalidated;
@@ -124,7 +125,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
                 continue;
             }
 
-            super.remove(next.get());
+            this.invalidate(next.get());
         }
     }
 
@@ -141,5 +142,10 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
     @Override
     public Store<V> synchronizedStore() {
         return new SynchronizedExpiringStore<>(this);
+    }
+
+    public void invalidate(@NotNull final V value) {
+        this.expirationManager.onExpire(value);
+        this.remove(value);
     }
 }
