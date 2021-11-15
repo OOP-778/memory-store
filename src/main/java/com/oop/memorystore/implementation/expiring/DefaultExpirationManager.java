@@ -4,8 +4,11 @@ import com.oop.memorystore.api.ExpirationManager;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy;
 import com.oop.memorystore.implementation.expiring.policy.ExpiringPolicy.ExpirationData;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 /**
  * Class to handle expirations
@@ -16,11 +19,18 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
     private final Map<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyData =
         new HashMap<>();
 
+    private final List<Consumer<V>> globalExpireListeners = new LinkedList<>();
+
     @SafeVarargs
     public DefaultExpirationManager(final ExpiringPolicy<V, ?>... policies) {
         for (final ExpiringPolicy<V, ?> policy : policies) {
             this.policyData.put(policy, new HashMap<>());
         }
+    }
+
+    @Override
+    public void addGlobalExpireListener(final Consumer<V> listener) {
+        this.globalExpireListeners.add(listener);
     }
 
     public boolean checkExpiration(final V value) {
@@ -87,6 +97,10 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
     }
 
     public void onExpire(final V value) {
+        for (final Consumer<V> globalExpireListener : this.globalExpireListeners) {
+            globalExpireListener.accept(value);
+        }
+
         for (final ExpiringPolicy<V, ?> policy : this.policyData.keySet()) {
             policy.onExpire(value);
         }
