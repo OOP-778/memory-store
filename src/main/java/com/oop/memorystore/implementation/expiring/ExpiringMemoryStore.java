@@ -18,7 +18,9 @@ import com.oop.memorystore.implementation.query.QueryDefinition;
 import com.oop.memorystore.implementation.reference.DefaultReferenceManager;
 import com.oop.memorystore.implementation.reference.Reference;
 import com.oop.memorystore.implementation.reference.ReferenceManager;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +28,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ExpiringMemoryStore<V> extends AbstractStore<V> implements ExpiringStore<V> {
-
     private final DefaultExpirationManager<V> expirationManager;
 
     public ExpiringMemoryStore(final ExpiringPolicy<V, ?>... policies) {
         super(
             new DefaultReferenceManager<>(
-                new DefaultIdentityProvider(), new ExpiringReferenceFactory<>()),
+                new DefaultIdentityProvider(), new ExpiringReferenceFactory<>(), Collections.synchronizedMap(new LinkedHashMap<>())),
             new ReferenceIndexManager<>());
         this.expirationManager = new DefaultExpirationManager<>(policies);
     }

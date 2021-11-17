@@ -17,20 +17,19 @@ public class DefaultReferenceManager<V> implements ReferenceManager<V> {
   private final ReferenceFactory<V> referenceFactory;
   private final Map<Object, Reference<V>> referenceMap;
 
-  public DefaultReferenceManager(
-      final IdentityProvider identityProvider, final ReferenceFactory<V> referenceFactory) {
+  public DefaultReferenceManager(final IdentityProvider identityProvider, final ReferenceFactory<V> referenceFactory) {
     this.identityProvider = identityProvider;
     this.referenceFactory = referenceFactory;
     this.referenceMap = new LinkedHashMap<>();
   }
 
-  private DefaultReferenceManager(
+  public DefaultReferenceManager(
       final IdentityProvider identityProvider,
       final ReferenceFactory<V> referenceFactory,
       final Map<Object, Reference<V>> referenceMap) {
     this.identityProvider = identityProvider;
     this.referenceFactory = referenceFactory;
-    this.referenceMap = new LinkedHashMap<>(referenceMap);
+    this.referenceMap = referenceMap;
   }
 
   @Override
