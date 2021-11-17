@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ExpiringMemoryStore<V> extends AbstractStore<V> implements ExpiringStore<V> {
@@ -33,7 +34,7 @@ public class ExpiringMemoryStore<V> extends AbstractStore<V> implements Expiring
     public ExpiringMemoryStore(final ExpiringPolicy<V, ?>... policies) {
         super(
             new DefaultReferenceManager<>(
-                new DefaultIdentityProvider(), new ExpiringReferenceFactory<>(), Collections.synchronizedMap(new LinkedHashMap<>())),
+                new DefaultIdentityProvider(), new ExpiringReferenceFactory<>(), new ConcurrentHashMap<>()),
             new ReferenceIndexManager<>());
         this.expirationManager = new DefaultExpirationManager<>(policies);
     }
