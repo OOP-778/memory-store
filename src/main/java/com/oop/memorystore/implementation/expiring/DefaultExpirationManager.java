@@ -34,20 +34,20 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
     }
 
     public boolean checkExpiration(final V value) {
-        boolean shouldExpire = false;
+        int expire = 0;
         for (final Map.Entry<
             ExpiringPolicy<V, ? extends ExpiringPolicy.ExpirationData>,
             Map<V, ExpiringPolicy.ExpirationData>>
             policyEntry : this.policyData.entrySet()) {
             final ExpiringPolicy policy = policyEntry.getKey();
 
-            shouldExpire = policy.checkExpiration(value, policyEntry.getValue().get(value));
+            final boolean shouldExpire = policy.checkExpiration(value, policyEntry.getValue().get(value));
             if (shouldExpire) {
-                break;
+                expire++;
             }
         }
 
-        return shouldExpire;
+        return expire == this.policyData.size();
     }
 
     public <T extends ExpirationData, E extends ExpiringPolicy> T getExpirationData(final V value, final Class<E> policyClass) {

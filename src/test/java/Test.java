@@ -1,38 +1,56 @@
+import com.oop.memorystore.api.Store;
+import com.oop.memorystore.implementation.index.IndexDefinition;
 import com.oop.memorystore.implementation.memory.MemoryStore;
 import com.oop.memorystore.implementation.query.Query;
-import com.oop.memorystore.implementation.query.QueryOperator;
-import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Test {
     public static void main(String[] args) {
         final MemoryStore<TestObject> objects = new MemoryStore<>();
-        objects.index("chunk", TestObject::getChunk);
-        objects.index("value", TestObject::getValue);
+        final Store<TestObject> synchronizedStore = objects.synchronizedStore();
+        synchronizedStore.index("value", IndexDefinition.withKeyMapping(TestObject::getValue));
 
-        for (int i = 0; i < 40000; i++) {
-            objects.add(new TestObject(
-                ThreadLocalRandom.current().nextInt(0, 40),
-                ThreadLocalRandom.current().nextInt(0, 4)
-            ));
+        final ExecutorService executorService = Executors.newCachedThreadPool();
+
+        synchronizedStore.add(new TestObject(10, 10));
+
+        final AtomicReference<Boolean> run = new AtomicReference<>(false);
+
+        for (int i = 0; i < 70; i++) {
+            executorService.execute(() -> {
+                while (!run.get()) {}
+
+
+                final Optional<TestObject> value = synchronizedStore.findFirst(Query.where("value", 10));
+                System.out.println(String.format("[%s %s]: %s", Thread.currentThread().getName(), System.currentTimeMillis(),
+                    value.isPresent()));
+            });
         }
 
-        measure("get", () -> {
-            System.out.println("get: " + objects.get(Query.where("chunk", 1).and("value", 2)).size());
-        });
+        for (int i = 0; i < 70; i++) {
+            executorService.execute(() -> {
+                while (!run.get()) {}
 
-        measure("query", () -> {
-            System.out.println("query: " + objects.createQuery()
-                                                  .filter("chunk", QueryOperator.FIRST, 1, 2, 2, 5, 6)
-                                                  .filter("value", 2)
-                                                  .collect(new HashSet<>())
-                                                  .size());
-        });
-    }
+                synchronizedStore.add(new TestObject(20,20));
+            });
+        }
 
-    protected static void measure(String name, Runnable task) {
-        long start = System.currentTimeMillis();
-        task.run();
-        System.out.println(String.format("%s task took %s ms", name, (System.currentTimeMillis() - start)));
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        run.set(true);
+
+        try {
+            executorService.shutdown();
+            executorService.awaitTermination(60, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
