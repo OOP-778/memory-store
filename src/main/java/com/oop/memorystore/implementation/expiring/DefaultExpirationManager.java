@@ -28,12 +28,30 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         }
     }
 
-    @Override
-    public void addGlobalExpireListener(final Consumer<V> listener) {
-        this.globalExpireListeners.add(listener);
+    public void onAdd(final V value) {
+        for (final Map.Entry<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyEntry :
+            this.policyData.entrySet()) {
+            final ExpiringPolicy.ExpirationData expirationData =
+                policyEntry.getKey().createExpirationData(value);
+            if (expirationData == null) {
+                continue;
+            }
+
+            policyEntry.getValue().put(value, expirationData);
+        }
+    }
+
+    public void onRemove(final V value) {
+        for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyData : this.policyData.entrySet()) {
+            policyData.getValue().remove(value);
+        }
     }
 
     public boolean checkExpiration(final V value) {
+        if (this.policyData.isEmpty()) {
+            return false;
+        }
+
         int expire = 0;
         for (final Map.Entry<
             ExpiringPolicy<V, ? extends ExpiringPolicy.ExpirationData>,
@@ -62,23 +80,9 @@ public class DefaultExpirationManager<V> implements ExpirationManager<V> {
         return null;
     }
 
-    public void onAdd(final V value) {
-        for (final Map.Entry<ExpiringPolicy<V, ?>, Map<V, ExpiringPolicy.ExpirationData>> policyEntry :
-            this.policyData.entrySet()) {
-            final ExpiringPolicy.ExpirationData expirationData =
-                policyEntry.getKey().createExpirationData(value);
-            if (expirationData == null) {
-                continue;
-            }
-
-            policyEntry.getValue().put(value, expirationData);
-        }
-    }
-
-    public void onRemove(final V value) {
-        for (final Entry<ExpiringPolicy<V, ?>, Map<V, ExpirationData>> policyData : this.policyData.entrySet()) {
-            policyData.getValue().remove(value);
-        }
+    @Override
+    public void addGlobalExpireListener(final Consumer<V> listener) {
+        this.globalExpireListeners.add(listener);
     }
 
     public void onAccess(final V value) {
