@@ -1,8 +1,12 @@
 package com.oop.memorystore.implementation.query;
 
 public class IndexMatch {
-  private final String indexName;
-  private final Object key;
+  private String indexName;
+  private Object key;
+
+  protected IndexMatch() {
+
+  }
 
   IndexMatch(final String indexName, final Object key) {
     this.indexName = indexName;
