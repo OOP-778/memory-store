@@ -35,35 +35,10 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         this.indexManager = indexManager;
     }
 
-    public List<V> remove(final Query query, int limit) {
-        final QueryDefinition definition = query.build();
-        final List<IndexMatch> indexMatches = definition.getIndexMatches();
-
-        final List<V> result = new LinkedList<>();
-
-        for (final IndexMatch indexMatch : indexMatches) {
-          if (limit == 0) {
-            break;
-          }
-
-            final Set<Reference<V>> references =
-                Optional.ofNullable(this.indexManager.getIndex(indexMatch.getIndexName()))
-                        .map(index -> index.getReferences(indexMatch.getKey()))
-                        .orElse(new HashSet<>());
-
-            final List<V> removed =
-                references
-                    .stream()
-                    .limit(limit == -1 ? Long.MAX_VALUE : limit)
-                    .peek(this.indexManager::removeReference)
-                    .map(Reference::get)
-                    .collect(Collectors.toList());
-
-            result.addAll(removed);
-            limit -= removed.size();
-        }
-
-        return result;
+    @Override
+    public <K> Index<V> index(final String indexName, final IndexDefinition<K, V> indexDefinition)
+        throws IndexException {
+        return this.indexManager.createIndex(indexName, indexDefinition, this.referenceManager.getReferences());
     }
 
     @Override
@@ -78,8 +53,8 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         for (final IndexMatch indexMatch : indexMatches) {
             final Set<Reference<V>> references =
                 Optional.ofNullable(this.indexManager.getIndex(indexMatch.getIndexName()))
-                        .map(index -> index.getReferences(indexMatch.getKey()))
-                        .orElse(Collections.emptySet());
+                    .map(index -> index.getReferences(indexMatch.getKey()))
+                    .orElse(Collections.emptySet());
 
             if (firstMatch || operator == Operator.OR) {
                 results.addAll(references);
@@ -97,12 +72,6 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
     }
 
     @Override
-    public <K> Index<V> index(final String indexName, final IndexDefinition<K, V> indexDefinition)
-        throws IndexException {
-        return this.indexManager.createIndex(indexName, indexDefinition, this.referenceManager.getReferences());
-    }
-
-    @Override
     public Index<V> getIndex(final String indexName) {
         return this.indexManager.getIndex(indexName);
     }
@@ -112,9 +81,38 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         return this.indexManager.getIndexes();
     }
 
-    @Override
-    public boolean removeIndex(final Index<V> index) {
-        return this.indexManager.removeIndex(index);
+    public List<V> remove(final Query query, int limit) {
+        final QueryDefinition definition = query.build();
+        final List<IndexMatch> indexMatches = definition.getIndexMatches();
+
+        final List<V> result = new LinkedList<>();
+
+        for (final IndexMatch indexMatch : indexMatches) {
+            if (limit == 0) {
+                break;
+            }
+
+            final Set<Reference<V>> references =
+                Optional.ofNullable(this.indexManager.getIndex(indexMatch.getIndexName()))
+                    .map(index -> index.getReferences(indexMatch.getKey()))
+                    .orElse(new HashSet<>());
+
+            final List<V> removed =
+                references
+                    .stream()
+                    .limit(limit == -1 ? Long.MAX_VALUE : limit)
+                    .peek(this.indexManager::removeReference)
+                    .map(Reference::get)
+                    .peek(this.referenceManager::remove)
+                    .collect(Collectors.toList());
+
+            result.addAll(removed);
+            if (limit != -1) {
+                limit -= removed.size();
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -123,13 +121,13 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
     }
 
     @Override
-    public void reindex() {
-        this.indexManager.reindex(this.referenceManager.getReferences());
+    public boolean removeIndex(final Index<V> index) {
+        return this.indexManager.removeIndex(index);
     }
 
     @Override
-    public void reindex(final V item) {
-        this.reindex(Collections.singleton(item));
+    public void reindex() {
+        this.indexManager.reindex(this.referenceManager.getReferences());
     }
 
     @Override
@@ -143,6 +141,32 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
                 .collect(Collectors.toList());
 
         this.indexManager.reindex(references);
+    }
+
+    @Override
+    public void reindex(final V item) {
+        this.reindex(Collections.singleton(item));
+    }
+
+    @Override
+    public Store<V> copy() {
+        return this.createCopy(this.referenceManager, this.indexManager);
+    }
+
+    public void lockIndexing(final boolean lockIndexing) {
+        this.lockIndexing = lockIndexing;
+    }
+
+    public StoreQueryImpl<V> createQuery() {
+        return new StoreQueryImpl<>(this);
+    }
+
+    protected abstract Store<V> createCopy(
+        final ReferenceManager<V> referenceManager, final IndexManager<V> indexManager);
+
+    @Override
+    public Iterator<V> iterator() {
+        return new StoreIterator(this.referenceManager.getReferences().iterator());
     }
 
     @Override
@@ -161,8 +185,20 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
     }
 
     @Override
-    public Iterator<V> iterator() {
-        return new StoreIterator(this.referenceManager.getReferences().iterator());
+    public boolean add(final V item) {
+        return this.addAll(Collections.singleton(item));
+    }
+
+    @Override
+    public boolean remove(final Object obj) {
+        final Reference<V> reference = this.referenceManager.remove(obj);
+
+        if (reference != null) {
+            this.indexManager.removeReference(reference);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -189,43 +225,10 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
     }
 
     @Override
-    public boolean add(final V item) {
-        return this.addAll(Collections.singleton(item));
-    }
-
-    @Override
-    public boolean remove(final Object obj) {
-        final Reference<V> reference = this.referenceManager.remove(obj);
-
-        if (reference != null) {
-            this.indexManager.removeReference(reference);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public void clear() {
         this.referenceManager.clear();
         this.indexManager.clear();
     }
-
-    @Override
-    public Store<V> copy() {
-        return this.createCopy(this.referenceManager, this.indexManager);
-    }
-
-    public void lockIndexing(final boolean lockIndexing) {
-        this.lockIndexing = lockIndexing;
-    }
-
-    public StoreQueryImpl<V> createQuery() {
-        return new StoreQueryImpl<>(this);
-    }
-
-    protected abstract Store<V> createCopy(
-        final ReferenceManager<V> referenceManager, final IndexManager<V> indexManager);
 
     protected ReferenceManager<V> getReferenceManager() {
         return this.referenceManager;
