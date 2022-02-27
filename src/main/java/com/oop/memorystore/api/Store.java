@@ -180,16 +180,9 @@ public interface Store<V> extends Collection<V> {
      * @param limit limit results to the first x number of items
      * @return values associated with this key or an empty list
      */
-    @Deprecated
     List<V> get(final Query query, int limit);
 
-    /**
-     * Query indexes and look up all matching value.
-     *
-     * @param query query to execute
-     * @return values associated with this key or an empty list
-     */
-    @Deprecated
+
     default List<V> get(final Query query) {
         return this.get(query, -1);
     }

@@ -3,7 +3,7 @@ package com.oop.memorystore.implementation.query;
 import java.util.ArrayList;
 import java.util.List;
 
-class QueryImpl implements BasicQuery, AndQuery, OrQuery {
+public class QueryImpl implements BasicQuery, AndQuery, OrQuery {
     private final List<IndexMatch> indexMatches = new ArrayList<>();
     private Operator operator;
 
