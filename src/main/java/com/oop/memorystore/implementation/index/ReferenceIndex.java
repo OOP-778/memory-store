@@ -137,6 +137,10 @@ public class ReferenceIndex<K, V> implements Index<V> {
         this.name, this.keyMapper, this.reducer, this.comparisonPolicy, keyToReferencesMapCopy, referenceToKeysMapCopy);
   }
 
+  public Set<K> getKeys(Reference<V> reference) {
+    return this.referenceToKeysMap.get(reference);
+  }
+
   private Set<K> generateKeys(final Reference<V> reference) throws IndexCreationException {
     final V item;
 

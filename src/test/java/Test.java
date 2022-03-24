@@ -16,41 +16,10 @@ public class Test {
 
         final ExecutorService executorService = Executors.newCachedThreadPool();
 
-        synchronizedStore.add(new TestObject(10, 10));
+        final TestObject testObject = new TestObject(10, 10);
 
-        final AtomicReference<Boolean> run = new AtomicReference<>(false);
+        synchronizedStore.add(testObject);
 
-        for (int i = 0; i < 70; i++) {
-            executorService.execute(() -> {
-                while (!run.get()) {}
-
-
-                final Optional<TestObject> value = synchronizedStore.findFirst(Query.where("value", 10));
-                System.out.println(String.format("[%s %s]: %s", Thread.currentThread().getName(), System.currentTimeMillis(),
-                    value.isPresent()));
-            });
-        }
-
-        for (int i = 0; i < 70; i++) {
-            executorService.execute(() -> {
-                while (!run.get()) {}
-
-                synchronizedStore.add(new TestObject(20,20));
-            });
-        }
-
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        run.set(true);
-
-        try {
-            executorService.shutdown();
-            executorService.awaitTermination(60, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        synchronizedStore.printDetails(testObject);
     }
 }

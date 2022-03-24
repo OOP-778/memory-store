@@ -131,6 +131,11 @@ public class UnmodifiableStore<V> implements Store<V> {
   }
 
   @Override
+  public void printDetails(V value) {
+    this.store.printDetails(value);
+  }
+
+  @Override
   public Index<V> getIndex(final String indexName) {
     return this.store.getIndex(indexName);
   }

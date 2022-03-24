@@ -5,6 +5,7 @@ import com.oop.memorystore.implementation.index.Index;
 import com.oop.memorystore.implementation.index.IndexDefinition;
 import com.oop.memorystore.implementation.index.IndexException;
 import com.oop.memorystore.implementation.index.IndexManager;
+import com.oop.memorystore.implementation.index.ReferenceIndex;
 import com.oop.memorystore.implementation.query.IndexMatch;
 import com.oop.memorystore.implementation.query.Operator;
 import com.oop.memorystore.implementation.query.Query;
@@ -20,6 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -257,6 +260,23 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
         public void remove() {
             this.iterator.remove();
             AbstractStore.this.indexManager.removeReference(this.previous);
+        }
+    }
+
+    @Override
+    public void printDetails(V value) {
+        System.out.println(String.format("=== Printing Details about %s ==", value));
+
+        final Optional<Reference<V>> reference = this.getReferenceManager().findReference(value);
+        if (!reference.isPresent()) {
+            System.out.println("This value does not exist in the collection");
+            return;
+        }
+
+        final Map<String, Collection> indexData = this.indexManager.getIndexData(reference.get());
+        System.out.println("=== Indexes ===");
+        for (Entry<String, Collection> indexEntry : indexData.entrySet()) {
+            System.out.println(String.format("Index: %s, keys: %s", indexEntry.getKey(), indexEntry.getValue()));
         }
     }
 }

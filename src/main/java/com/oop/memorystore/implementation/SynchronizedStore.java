@@ -473,6 +473,13 @@ public class SynchronizedStore<V> implements Store<V> {
   }
 
   @Override
+  public void printDetails(V value) {
+    synchronized (this.mutex) {
+      this.store.printDetails(value);
+    }
+  }
+
+  @Override
   public String toString() {
     return this.store.toString();
   }
