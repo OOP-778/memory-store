@@ -279,4 +279,9 @@ public abstract class AbstractStore<V> extends AbstractCollection<V> implements 
             System.out.println(String.format("Index: %s, keys: %s", indexEntry.getKey(), indexEntry.getValue()));
         }
     }
+
+    @Override
+    public IndexManager<V> getIndexManager() {
+        return this.indexManager;
+    }
 }

@@ -5,6 +5,7 @@ import com.oop.memorystore.implementation.UnmodifiableStore;
 import com.oop.memorystore.implementation.index.Index;
 import com.oop.memorystore.implementation.index.IndexDefinition;
 import com.oop.memorystore.implementation.index.IndexException;
+import com.oop.memorystore.implementation.index.IndexManager;
 import com.oop.memorystore.implementation.index.KeyMapper;
 import com.oop.memorystore.implementation.index.reducer.Reducer;
 import com.oop.memorystore.implementation.query.Query;
@@ -369,4 +370,9 @@ public interface Store<V> extends Collection<V> {
      * @param value that's holded here to print details about
      */
     void printDetails(V value);
+
+    /**
+     * Get index manager
+     */
+    IndexManager<V> getIndexManager();
 }

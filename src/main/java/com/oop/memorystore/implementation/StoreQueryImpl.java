@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StoreQueryImpl<V> implements StoreQuery<V> {
-    protected final AbstractStore<V> store;
+    protected final Store<V> store;
     protected final Set<Reference<V>> collection = new LinkedHashSet<>();
 
     public StoreQueryImpl(final Store<V> store) {
@@ -27,7 +27,7 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
 
     @Override
     public StoreQueryImpl<V> filter(final String indexName, final QueryOperator operator, final Object... equals) {
-        final ReferenceIndex<?, V> index = this.store.indexManager.getIndex(indexName);
+        final ReferenceIndex<?, V> index = this.store.getIndexManager().getIndex(indexName);
         if (index == null) {
             throw new IllegalStateException(String.format("Invalid index by name: %s", indexName));
         }

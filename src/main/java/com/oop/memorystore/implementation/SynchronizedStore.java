@@ -480,6 +480,11 @@ public class SynchronizedStore<V> implements Store<V> {
   }
 
   @Override
+  public IndexManager<V> getIndexManager() {
+    return this.store.getIndexManager();
+  }
+
+  @Override
   public String toString() {
     return this.store.toString();
   }
