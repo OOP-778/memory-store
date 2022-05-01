@@ -17,7 +17,7 @@ public class StoreQueryImpl<V> implements StoreQuery<V> {
     protected final Set<Reference<V>> collection = new LinkedHashSet<>();
 
     public StoreQueryImpl(final Store<V> store) {
-        this.store = (AbstractStore<V>) store;
+        this.store = store;
     }
 
     @Override
