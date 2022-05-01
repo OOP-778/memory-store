@@ -6,6 +6,7 @@ import com.oop.memorystore.implementation.expiring.ExpiringStoreQuery;
 import com.oop.memorystore.implementation.index.Index;
 import com.oop.memorystore.implementation.index.IndexDefinition;
 import com.oop.memorystore.implementation.index.IndexException;
+import com.oop.memorystore.implementation.index.IndexManager;
 import com.oop.memorystore.implementation.index.KeyMapper;
 import com.oop.memorystore.implementation.index.reducer.Reducer;
 import com.oop.memorystore.implementation.query.Query;
@@ -133,6 +134,11 @@ public class UnmodifiableStore<V> implements Store<V> {
   @Override
   public void printDetails(V value) {
     this.store.printDetails(value);
+  }
+
+  @Override
+  public IndexManager<V> getIndexManager() {
+    return this.store.getIndexManager();
   }
 
   @Override
